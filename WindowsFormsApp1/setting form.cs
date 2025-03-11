@@ -1,4 +1,5 @@
 ﻿using iText.StyledXmlParser.Jsoup.Safety;
+using Microsoft.Office.Interop.Word;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,6 +16,8 @@ namespace WindowsFormsApp1
 {
     public partial class setting_form : Form
     {
+        string[] selectedFonts;
+        string filePath;
 
         public setting_form()
         {
@@ -23,131 +26,32 @@ namespace WindowsFormsApp1
         }
 
         private void setting_form_Load(object sender, EventArgs e)
-        {          
-              
-            
+        {
+
+
             string folderPath = AppDomain.CurrentDomain.BaseDirectory;
 
             try
             {
-                string filePath = Path.Combine(folderPath, fgdfgdf );
+                filePath = Path.Combine(folderPath, "selected_fonts.txt");
 
+                if (File.Exists(filePath))
+                {                    
+                    selectedFonts = File.ReadAllLines(filePath);
+                    listBoxSelectedFonts.Items.AddRange(selectedFonts);
+                }
+                else
+                {
+                    MessageBox.Show("File not found: " + filePath);
+                }
             }
             catch (Exception ex)
             {
-                    MessageBox.Show($"an error occurred :{ex.Message}");
+                MessageBox.Show($"an error occurred :{ex.Message}");
             }
-
-
-                if (!Directory.Exists(mainFolder))
-                {
-                    Directory.CreateDirectory(mainFolderPath);
-
-                    foreach (var folder in subfolder)
-                    {
-                        Directory.CreateDirectory(Path.Combine(mainFolderPath, folder));
-                    }
-                    Console.WriteLine("the first run ! folders maided seccessfully");
-                }
-                else
-                {
-                    Console.WriteLine("already exist!");
-                }
-
-                List<int> fontSize = new List<int> { 8, 9, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72 };
-                //size of fonts 
-
-                foreach (int size in fontSize)
-                {
-                    fontSizeComboBox.Items.Add(size.ToString());
-                }
-
-
-
-            }
-
-
-            private void ReadFileIntoList(string filePath, string fontFilePath)
-            {
-                allDocxFiles.Clear();
-
-
-                char delimiter = '-';
-
-                try
-                {
-
-                    if (Directory.Exists(wordPath))
-                    {
-                        string[] docxFiles = Directory.GetFiles(wordPath, "*.docx", SearchOption.AllDirectories);
-                        allDocxFiles = new List<string>(docxFiles); // Initialize and add found files
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Directory {wordPath} does not exist.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"An error occurred: {ex.Message}");
-                }
-
-
-                if (File.Exists(filePath))
-                {
-                    string[] lines = File.ReadAllLines(filePath);
-                    dataList.AddRange(lines);
-                }
-                else
-                {
-                    MessageBox.Show("file does not exist");
-                    return;
-                }
-
-                if (dataList.Count > 0)
-                {
-                    foreach (string line in dataList)
-                    {
-                        Console.WriteLine(line);
-                        string[] substring = line.Split(delimiter);
-                        if (substring.Length >= 4)
-                        {
-                            alphaList.Add(substring[0]);
-                            nameList.Add(substring[1]);
-                            voiceTagList.Add(substring[2]);
-                            dateList.Add(substring[3]);
-                        }
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("no data available ");
-                    return;
-                }
-
-                // Parse dateList to DateTime and sort indices based on the dates
-                List<int> sortedIndices = dateList
-                    .Select((date, index) => new { Date = DateTime.Parse(date), Index = index })
-                    .OrderBy(x => x.Date)
-                    .Select(x => x.Index)
-                    .ToList();
-
-                // Reorder all lists based on the sorted indices
-                alphaList = sortedIndices.Select(index => alphaList[index]).ToList();
-                nameList = sortedIndices.Select(index => nameList[index]).ToList();
-                voiceTagList = sortedIndices.Select(index => voiceTagList[index]).ToList();
-                dateList = sortedIndices.Select(index => dateList[index]).ToList();
-
-
-                // Print sorted lists for verification
-                for (int i = 0; i < alphaList.Count; i++)
-                {
-                    Console.WriteLine($"{alphaList[i]} | {nameList[i]} | {voiceTagList[i]} | {dateList[i]}");
-                }
-            }
-
-
+            
         }
+
 
         private void LoadFonts()
         {
@@ -162,6 +66,13 @@ namespace WindowsFormsApp1
 
         private void ButtonAdd_Click(object sender, EventArgs e)
         {
+            int countItem = listBoxSelectedFonts.Items.Count;
+            // Prevent adding more than 9 fonts
+            if (countItem > 9)
+            {
+                MessageBox.Show("you can not select more then 9 fonts ");
+                return;
+            }
 
             // Retrieve the selected items from both ListBoxes
             var selectedFontName = listBoxAllFonts.SelectedItem?.ToString();
@@ -177,9 +88,7 @@ namespace WindowsFormsApp1
                 MessageBox.Show("Please select both a font and a size.");
 
             }
-
-
-          
+         
         }
 
         private void ButtonRemove_Click(object sender, EventArgs e)
