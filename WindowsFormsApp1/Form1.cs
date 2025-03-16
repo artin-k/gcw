@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Word =  Microsoft.Office.Interop.Word;
 
+
 using NAudio.Wave;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
+
 using System.Linq;
 using System.Threading.Tasks;
 using System.Drawing;
@@ -19,6 +19,9 @@ using System.Diagnostics;
 using System.Threading;
 using System.Media;
 using Timer = System.Windows.Forms.Timer;
+using Microsoft.Office.Interop.Word;
+
+//cursor tutorial
 
 namespace WindowsFormsApp1
 {
@@ -67,6 +70,10 @@ namespace WindowsFormsApp1
         private AudioFileReader audioFile;
         private WaveOutEvent outputDevice;
 
+        // opening save the style in the word 
+        //paging 
+        //inset add break page 
+        //
         public Form1()
         {
             this.KeyPreview = true;
@@ -1390,7 +1397,7 @@ namespace WindowsFormsApp1
             printer.Print();
         }
 
-
+/*
     private void savePdfBtn_Click(object sender, EventArgs e)
     {
         try
@@ -1433,7 +1440,7 @@ namespace WindowsFormsApp1
             MessageBox.Show($"An error occurred while creating the PDF: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
-
+*/
 
         private void saveAsBtn_Click(object sender, EventArgs e)
         {
@@ -1962,15 +1969,7 @@ namespace WindowsFormsApp1
             }
         }
 
-        private void PBObtn_Click(object sender, EventArgs e)
-        {
-            Chunk p = new Chunk("normal text");
-            Chunk superscript = new Chunk("superscript");
-            superscript.SetTextRise(5f);
-            superscript.Font.Size = 12;
-            MainrichTextBox.AppendText(String.Concat(p, superscript));
-            
-        }
+
 
         private void statusBtn_Click(object sender, EventArgs e)
         {
@@ -2050,7 +2049,27 @@ namespace WindowsFormsApp1
             }
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var wordApp = new Microsoft.Office.Interop.Word.Application();
+            Document doc = wordApp.Documents.Open(@"C:\Users\Artin\Desktop\sprechen außland.docx", ReadOnly: false, Visible: false);
 
+            // Select all content in Word document
+            doc.Range().Copy(); // Standard copy preserves editable RTF
+
+            // Get data from clipboard as RTF
+            IDataObject data = Clipboard.GetDataObject();
+            if (data.GetDataPresent(DataFormats.Rtf))
+            {
+                string rtfContent = (string)data.GetData(DataFormats.Rtf);
+                // Load full editable formatted content into RichTextBox
+                MainrichTextBox.Rtf = rtfContent;
+            }
+
+            // Cleanup
+            doc.Close(false);
+
+        }
     }
 }
 

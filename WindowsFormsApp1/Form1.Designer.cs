@@ -71,6 +71,7 @@ namespace WindowsFormsApp1
             this.MainrichTextBox = new System.Windows.Forms.RichTextBox();
             this.btnSetSpacing = new System.Windows.Forms.Button();
             this.spacingValue = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -278,7 +279,7 @@ namespace WindowsFormsApp1
             this.savePdfBtn.Text = "save pdf";
             this.savePdfBtn.UseVisualStyleBackColor = true;
             this.savePdfBtn.Visible = false;
-            this.savePdfBtn.Click += new System.EventHandler(this.savePdfBtn_Click);
+         
             // 
             // printBtn
             // 
@@ -352,17 +353,6 @@ namespace WindowsFormsApp1
             this.groupBox3.Size = new System.Drawing.Size(216, 133);
             this.groupBox3.TabIndex = 20;
             this.groupBox3.TabStop = false;
-            // 
-            // PBObtn
-            // 
-            this.PBObtn.Location = new System.Drawing.Point(22, 52);
-            this.PBObtn.Name = "PBObtn";
-            this.PBObtn.Size = new System.Drawing.Size(73, 55);
-            this.PBObtn.TabIndex = 20;
-            this.PBObtn.Text = "PBO";
-            this.PBObtn.UseVisualStyleBackColor = true;
-            this.PBObtn.Visible = false;
-            this.PBObtn.Click += new System.EventHandler(this.PBObtn_Click);
             // 
             // changeColor
             // 
@@ -501,11 +491,22 @@ namespace WindowsFormsApp1
             this.spacingValue.Size = new System.Drawing.Size(154, 33);
             this.spacingValue.TabIndex = 33;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(874, 320);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(103, 55);
+            this.button1.TabIndex = 34;
+            this.button1.Text = "بوک مارک";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1231, 545);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.spacingValue);
             this.Controls.Add(this.btnSetSpacing);
             this.Controls.Add(this.MainrichTextBox);
@@ -575,6 +576,7 @@ namespace WindowsFormsApp1
         private System.Windows.Forms.RichTextBox MainrichTextBox;
         private System.Windows.Forms.Button btnSetSpacing;
         private System.Windows.Forms.TextBox spacingValue;
+        private System.Windows.Forms.Button button1;
     }
 }
 
