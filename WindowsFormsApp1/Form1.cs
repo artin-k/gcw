@@ -641,9 +641,11 @@ namespace WindowsFormsApp1
             }
         }
 
+        private bool isRecording = false;
+        private bool isWaitingForKey = false;
+
         private void button7_Click(object sender, EventArgs e)
         {
-
             string bookChar = "ˑ";
             int textPlace = MainrichTextBox.SelectionStart;
             MainrichTextBox.Text = MainrichTextBox.Text.Substring(0, textPlace) + bookChar + MainrichTextBox.Text.Substring(textPlace);
@@ -652,32 +654,30 @@ namespace WindowsFormsApp1
 
             MessageBox.Show("push a key");
 
-            this.MainrichTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
-            this.MainrichTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyUp);
+            isWaitingForKey = true; // <---- Activate waiting mode
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
+            if (isWaitingForKey)
             {
-
-                HandleAlphabetKeyDown(e.KeyCode);
-
+                if (e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
+                {
+                    HandleAlphabetKeyDown(e.KeyCode);
+                }
+                else
+                {
+                    MessageBox.Show("Wrong key, try again!");
+                }
             }
-            else
-            {
-                MessageBox.Show("Wrong key, try again!");
-            }
-
         }
-
-        private bool isRecording = false;
 
         private void HandleAlphabetKeyDown(Keys key)
         {
             if (!isRecording)
             {
                 isRecording = true;
+                isWaitingForKey = false; // <--- Exit waiting mode after key
                 MainrichTextBox.ReadOnly = true;
 
                 Recording();
@@ -698,6 +698,7 @@ namespace WindowsFormsApp1
                 MainrichTextBox.ReadOnly = false;
             }
         }
+
 
 
         private void exitBtn_Click(object sender, EventArgs e)
@@ -1859,7 +1860,7 @@ namespace WindowsFormsApp1
                 }
             }
         }
-
+        /*
         private void FontComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (fontList.Count >= 10)
@@ -1901,6 +1902,8 @@ namespace WindowsFormsApp1
             saveFontFile(selectedFont);
            
         }
+*/
+
         private void saveFontFile(string selectedFont)
         {
             try
@@ -2070,6 +2073,74 @@ namespace WindowsFormsApp1
             doc.Close(false);
 
         }
+        private void ExportPagesToWord(List<string> pages)
+        {
+
+                var wordApp = new Word.Application();
+                wordApp.Visible = false;
+                var doc = wordApp.Documents.Add();
+
+                string[] sections = MainrichTextBox.Text.Split(new string[] { "[PAGE_BREAK]" }, StringSplitOptions.None);
+
+                foreach (string section in sections)
+                {
+                    Word.Paragraph para = doc.Content.Paragraphs.Add();
+                    para.Range.Text = section.Trim();
+
+                    if (section != sections.Last())
+                    {
+                        para.Range.InsertBreak(Word.WdBreakType.wdPageBreak);
+                    }
+                }
+
+                doc.SaveAs2(@"C:\Users\Artin\Desktop\MyDocumentWithPageBreaks.docx");
+                doc.Close();
+                wordApp.Quit();
+       
+
+        }
+
+        private List<string> GetPagesFromRichTextBox()
+        {
+            List<string> pages = new List<string>();
+
+            string allText = MainrichTextBox.Text;
+
+            // Example: split every 1000 characters (dummy pagination)
+            int charsPerPage = 1000;
+            for (int i = 0; i < allText.Length; i += charsPerPage)
+            {
+                string pageText = allText.Substring(i, Math.Min(charsPerPage, allText.Length - i));
+                pages.Add(pageText);
+            }
+
+            return pages;
+        }
+
+
+        private void exportBtn_Click(object sender, EventArgs e)
+        {
+            // Step 1: Get your pages from your UI (from RichTextBox(es))
+            List<string> pages = GetPagesFromRichTextBox();
+
+            // Step 2: Export them to Word
+            ExportPagesToWord(pages);
+
+            MessageBox.Show("Exported to Word successfully!");
+        }
+
+        private void spacingValue_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnInsertPageBreak_Click(object sender, EventArgs e)
+        {
+            int pos = MainrichTextBox.SelectionStart;
+            MainrichTextBox.Text = MainrichTextBox.Text.Insert(pos, "[PAGE_BREAK]\n");
+        }
+
+
     }
 }
 

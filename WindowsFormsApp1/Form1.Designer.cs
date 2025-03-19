@@ -72,6 +72,8 @@ namespace WindowsFormsApp1
             this.btnSetSpacing = new System.Windows.Forms.Button();
             this.spacingValue = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.exportBtn = new System.Windows.Forms.Button();
+            this.btnInsertPageBreak = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -267,7 +269,6 @@ namespace WindowsFormsApp1
             this.fontComboBox.Visible = false;
             this.fontComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.FontComboBox_DrawItem);
             this.fontComboBox.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.FontComboBox_MeasureItem);
-            this.fontComboBox.SelectedIndexChanged += new System.EventHandler(this.FontComboBox_SelectedIndexChanged);
             this.fontComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ComboBox_KeyPress);
             // 
             // savePdfBtn
@@ -279,7 +280,6 @@ namespace WindowsFormsApp1
             this.savePdfBtn.Text = "save pdf";
             this.savePdfBtn.UseVisualStyleBackColor = true;
             this.savePdfBtn.Visible = false;
-         
             // 
             // printBtn
             // 
@@ -353,6 +353,13 @@ namespace WindowsFormsApp1
             this.groupBox3.Size = new System.Drawing.Size(216, 133);
             this.groupBox3.TabIndex = 20;
             this.groupBox3.TabStop = false;
+            // 
+            // PBObtn
+            // 
+            this.PBObtn.Location = new System.Drawing.Point(0, 0);
+            this.PBObtn.Name = "PBObtn";
+            this.PBObtn.Size = new System.Drawing.Size(75, 23);
+            this.PBObtn.TabIndex = 0;
             // 
             // changeColor
             // 
@@ -490,6 +497,7 @@ namespace WindowsFormsApp1
             this.spacingValue.Name = "spacingValue";
             this.spacingValue.Size = new System.Drawing.Size(154, 33);
             this.spacingValue.TabIndex = 33;
+            this.spacingValue.TextChanged += new System.EventHandler(this.spacingValue_TextChanged);
             // 
             // button1
             // 
@@ -501,11 +509,33 @@ namespace WindowsFormsApp1
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // exportBtn
+            // 
+            this.exportBtn.Location = new System.Drawing.Point(847, 243);
+            this.exportBtn.Name = "exportBtn";
+            this.exportBtn.Size = new System.Drawing.Size(75, 58);
+            this.exportBtn.TabIndex = 8;
+            this.exportBtn.Text = "export";
+            this.exportBtn.UseVisualStyleBackColor = true;
+            this.exportBtn.Click += new System.EventHandler(this.exportBtn_Click);
+            // 
+            // btnInsertPageBreak
+            // 
+            this.btnInsertPageBreak.Location = new System.Drawing.Point(846, 407);
+            this.btnInsertPageBreak.Name = "btnInsertPageBreak";
+            this.btnInsertPageBreak.Size = new System.Drawing.Size(75, 58);
+            this.btnInsertPageBreak.TabIndex = 35;
+            this.btnInsertPageBreak.Text = "break page";
+            this.btnInsertPageBreak.UseVisualStyleBackColor = true;
+            this.btnInsertPageBreak.Click += new System.EventHandler(this.btnInsertPageBreak_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1231, 545);
+            this.Controls.Add(this.btnInsertPageBreak);
+            this.Controls.Add(this.exportBtn);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.spacingValue);
             this.Controls.Add(this.btnSetSpacing);
@@ -577,6 +607,8 @@ namespace WindowsFormsApp1
         private System.Windows.Forms.Button btnSetSpacing;
         private System.Windows.Forms.TextBox spacingValue;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button exportBtn;
+        private System.Windows.Forms.Button btnInsertPageBreak;
     }
 }
 
