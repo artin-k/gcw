@@ -241,7 +241,7 @@ namespace WindowsFormsApp1
             this.groupBox1.Controls.Add(this.bookMarkBtn);
             this.groupBox1.Controls.Add(this.gotoBtn);
             this.groupBox1.Controls.Add(this.gotoBmark);
-            this.groupBox1.Location = new System.Drawing.Point(928, 9);
+            this.groupBox1.Location = new System.Drawing.Point(1293, 9);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(295, 166);
             this.groupBox1.TabIndex = 18;
@@ -348,7 +348,7 @@ namespace WindowsFormsApp1
             this.groupBox3.Controls.Add(this.endsentBtn);
             this.groupBox3.Controls.Add(this.startsentBtn);
             this.groupBox3.Controls.Add(this.insertBtn);
-            this.groupBox3.Location = new System.Drawing.Point(12, 403);
+            this.groupBox3.Location = new System.Drawing.Point(12, 598);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(216, 133);
             this.groupBox3.TabIndex = 20;
@@ -381,7 +381,7 @@ namespace WindowsFormsApp1
             this.groupBox4.Controls.Add(this.startparBtn);
             this.groupBox4.Controls.Add(this.endparBtn);
             this.groupBox4.Controls.Add(this.button4);
-            this.groupBox4.Location = new System.Drawing.Point(927, 365);
+            this.groupBox4.Location = new System.Drawing.Point(1292, 560);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(308, 180);
             this.groupBox4.TabIndex = 21;
@@ -412,7 +412,7 @@ namespace WindowsFormsApp1
             // 
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 16;
-            this.listBox1.Location = new System.Drawing.Point(944, 181);
+            this.listBox1.Location = new System.Drawing.Point(1079, 158);
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(370, 148);
             this.listBox1.TabIndex = 22;
@@ -470,9 +470,9 @@ namespace WindowsFormsApp1
             // 
             // MainrichTextBox
             // 
-            this.MainrichTextBox.Location = new System.Drawing.Point(514, 158);
+            this.MainrichTextBox.Location = new System.Drawing.Point(287, 158);
             this.MainrichTextBox.Name = "MainrichTextBox";
-            this.MainrichTextBox.Size = new System.Drawing.Size(312, 302);
+            this.MainrichTextBox.Size = new System.Drawing.Size(616, 302);
             this.MainrichTextBox.TabIndex = 31;
             this.MainrichTextBox.Text = "";
             this.MainrichTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
@@ -501,17 +501,17 @@ namespace WindowsFormsApp1
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(874, 320);
+            this.button1.Location = new System.Drawing.Point(948, 270);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(103, 55);
             this.button1.TabIndex = 34;
-            this.button1.Text = "بوک مارک";
+            this.button1.Text = "باز کردن فرمت";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // exportBtn
             // 
-            this.exportBtn.Location = new System.Drawing.Point(847, 243);
+            this.exportBtn.Location = new System.Drawing.Point(948, 206);
             this.exportBtn.Name = "exportBtn";
             this.exportBtn.Size = new System.Drawing.Size(75, 58);
             this.exportBtn.TabIndex = 8;
@@ -521,7 +521,7 @@ namespace WindowsFormsApp1
             // 
             // btnInsertPageBreak
             // 
-            this.btnInsertPageBreak.Location = new System.Drawing.Point(846, 407);
+            this.btnInsertPageBreak.Location = new System.Drawing.Point(948, 342);
             this.btnInsertPageBreak.Name = "btnInsertPageBreak";
             this.btnInsertPageBreak.Size = new System.Drawing.Size(75, 58);
             this.btnInsertPageBreak.TabIndex = 35;
@@ -533,7 +533,7 @@ namespace WindowsFormsApp1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1231, 545);
+            this.ClientSize = new System.Drawing.Size(1596, 740);
             this.Controls.Add(this.btnInsertPageBreak);
             this.Controls.Add(this.exportBtn);
             this.Controls.Add(this.button1);

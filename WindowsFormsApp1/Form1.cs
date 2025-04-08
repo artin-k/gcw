@@ -2055,7 +2055,7 @@ namespace WindowsFormsApp1
         private void button1_Click(object sender, EventArgs e)
         {
             var wordApp = new Microsoft.Office.Interop.Word.Application();
-            Document doc = wordApp.Documents.Open(@"C:\Users\Artin\Desktop\sprechen außland.docx", ReadOnly: false, Visible: false);
+            Document doc = wordApp.Documents.Open(@"C:\Users\Artin\Desktop\New Microsoft Word Document (6).docx", ReadOnly: false, Visible: false);
 
             // Select all content in Word document
             doc.Range().Copy(); // Standard copy preserves editable RTF
