@@ -412,7 +412,7 @@ namespace WindowsFormsApp1
             // 
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 16;
-            this.listBox1.Location = new System.Drawing.Point(1079, 158);
+            this.listBox1.Location = new System.Drawing.Point(1140, 242);
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(370, 148);
             this.listBox1.TabIndex = 22;
@@ -501,7 +501,7 @@ namespace WindowsFormsApp1
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(948, 270);
+            this.button1.Location = new System.Drawing.Point(948, 281);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(103, 55);
             this.button1.TabIndex = 34;
