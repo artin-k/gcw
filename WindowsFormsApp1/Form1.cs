@@ -31,34 +31,38 @@ namespace WindowsFormsApp1
     public partial class Form1 : Form
     {
         private bool isAlarmActive = false; // Flag to track if the alarm has already sounded
-        
+        public int[] savedCarentPosiotion = new int[10];
+        public int countBmark = 1;
         string fontFilePath;
         string filePathData;
+        string[] fontNames;
+
         private object lastSelectedItem;
         string pressedChar;
         string wordName;
         string wordPath;
+        string userVoicePath;
+        string mainData;
         Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
         int projecktNummber;
-        string DocumentsPath;
+
+        //string DocumentsPath;
         static int newVoice = 0;
         //static int newFile = 0;
         private WaveInEvent waveIn;
-        private WaveFileWriter writer;
-        string soundMappingFiles;
+        private WaveFileWriter writer;        
         private IWavePlayer waveOutDevice;
         private AudioFileReader audioFileReader;
-        private Dictionary<char, string> soundMappings;
-        private Button saveBtn;
+       
+
         string textBoxValue;
-        //string projektName;
-        //string projektPath;
+        private bool isRecording = false;
+        private bool isWaitingForKey = false;
+
         private string outputFilePath;
-        string mainFolderPath;
-        string wordFilePath;
-        private string mainFolder = "subDatas";
+
         private Timer beepTimer;
-        private string[] subfolder = { "voices", "datafiles", "sound mapping", "pdf folder" };
+
         List<string> allDocxFiles = new List<string>();
         private List<string> dataList = new List<string>();
         private List<string> alphaList = new List<string>();
@@ -70,6 +74,11 @@ namespace WindowsFormsApp1
         private AudioFileReader audioFile;
         private WaveOutEvent outputDevice;
 
+        
+        string soundMapping = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "soundDictionary");
+        
+        private Dictionary<char, string> soundMappings;
+
         // opening save the style in the word 
         //paging 
         //inset add break page 
@@ -78,7 +87,7 @@ namespace WindowsFormsApp1
         {
             this.KeyPreview = true;
             InitializeComponent();
-            PopulateFontComboBox();
+            
             InitializeTimer();
             InitializeSoundMappings();
             this.MainrichTextBox.PreviewKeyDown += new PreviewKeyDownEventHandler(textBox1_PreviewKeyDown);
@@ -94,152 +103,166 @@ namespace WindowsFormsApp1
         }
         
 
-
-
-
         //83899518
      
 
         private void InitializeSoundMappings()
         {
-
             soundMappings = new Dictionary<char, string>
-        {
-        {'ا', @"C:\Users\Artin\Documents\voice files project\alef.mp3"},
-        {'ب', @"C:\Users\Artin\Documents\voice files project\be.mp3"},
-        {'پ', @"C:\Users\Artin\Documents\voice files project\pe.mp3"},
-        {'ت', @"C:\Users\Artin\Documents\voice files project\te.mp3"},
-        {'ث', @"C:\Users\Artin\Documents\voice files project\se.mp3"},
-        {'ج', @"C:\Users\Artin\Documents\voice files project\je.mp3"},
-        {'چ', @"C:\Users\Artin\Documents\voice files project\che.mp3"},
-        {'ح', @"C:\Users\Artin\Documents\voice files project\hhe.mp3"},
-        {'خ', @"C:\Users\Artin\Documents\voice files project\khe.mp3"},
-        {'د', @"C:\Users\Artin\Documents\voice files project\dal.mp3"},
-        {'ذ', @"C:\Users\Artin\Documents\voice files project\dal_ze.mp3"},
-        {'ر', @"C:\Users\Artin\Documents\voice files project\re.mp3"},
-        {'ز', @"C:\Users\Artin\Documents\voice files project\ze.mp3"},
-        {'ژ', @"C:\Users\Artin\Documents\voice files project\zhe.mp3"},
-        {'س', @"C:\Users\Artin\Documents\voice files project\sse.mp3"},
-        {'ش', @"C:\Users\Artin\Documents\voice files project\she.mp3"},
-        {'ص', @"C:\Users\Artin\Documents\voice files project\sad.mp3"},
-        {'ض', @"C:\Users\Artin\Documents\voice files project\zad.mp3"},
-        {'ط', @"C:\Users\Artin\Documents\voice files project\ta.mp3"},
-        {'ظ', @"C:\Users\Artin\Documents\voice files project\za.mp3"},
-        {'ع', @"C:\Users\Artin\Documents\voice files project\ain.mp3"},
-        {'غ', @"C:\Users\Artin\Documents\voice files project\ghain.mp3"},
-        {'ف', @"C:\Users\Artin\Documents\voice files project\fe.mp3"},
-        {'ق', @"C:\Users\Artin\Documents\voice files project\ghaf.mp3"},
-        {'ک', @"C:\Users\Artin\Documents\voice files project\kaf.mp3"},
-        {'گ', @"C:\Users\Artin\Documents\voice files project\gaf.mp3"},
-        {'ل', @"C:\Users\Artin\Documents\voice files project\lam.mp3"},
-        {'م', @"C:\Users\Artin\Documents\voice files project\mim.mp3"},
-        {'ن', @"C:\Users\Artin\Documents\voice files project\non.mp3"},
-        {'و', @"C:\Users\Artin\Documents\voice files project\ve.mp3"},
-        {'ه', @"C:\Users\Artin\Documents\voice files project\he.mp3"},
-        {'ی', @"C:\Users\Artin\Documents\voice files project\ye.mp3"},
-        {'إ', @"C:\Users\Artin\Documents\voice files project\alf_hamze.mp3"},
-        {'ؤ', @"C:\Users\Artin\Documents\voice files project\ve_hamze.mp3"},
-        {'ئ', @"C:\Users\Artin\Documents\voice files project\ye_hamze.mp3"},
+        { 
+        {'ا', Path.Combine(soundMapping, "alef.mp3")},
+        {'ب', Path.Combine(soundMapping, "be.mp3")},
+        {'پ', Path.Combine(soundMapping, "pe.mp3")},
+        {'ت', Path.Combine(soundMapping, "te.mp3")},
+        {'ث', Path.Combine(soundMapping, "se.mp3")},
+        {'ج', Path.Combine(soundMapping, "je.mp3")},
+        {'چ', Path.Combine(soundMapping, "che.mp3")},
+        {'ح', Path.Combine(soundMapping, "hhe.mp3")},
+        {'خ', Path.Combine(soundMapping, "khe.mp3")},
+        {'د', Path.Combine(soundMapping, "dal.mp3")},
+        {'ذ', Path.Combine(soundMapping, "dal_ze.mp3")},
+        {'ر', Path.Combine(soundMapping, "re.mp3")},
+        {'ز', Path.Combine(soundMapping, "ze.mp3")},
+        {'ژ', Path.Combine(soundMapping, "zhe.mp3")},
+        {'س', Path.Combine(soundMapping, "sse.mp3")},
+        {'ش', Path.Combine(soundMapping, "she.mp3")},
+        {'ص', Path.Combine(soundMapping, "sad.mp3")},
+        {'ض', Path.Combine(soundMapping, "zad.mp3")},
+        {'ط', Path.Combine(soundMapping, "ta.mp3")},
+        {'ظ', Path.Combine(soundMapping, "za.mp3")},
+        {'ع', Path.Combine(soundMapping, "ain.mp3")},
+        {'غ', Path.Combine(soundMapping, "ghain.mp3")},
+        {'ف', Path.Combine(soundMapping, "fe.mp3")},
+        {'ق', Path.Combine(soundMapping, "ghaf.mp3")},
+        {'ک', Path.Combine(soundMapping, "kaf.mp3")},
+        {'گ', Path.Combine(soundMapping, "gaf.mp3")},
+        {'ل', Path.Combine(soundMapping, "lam.mp3")},
+        {'م', Path.Combine(soundMapping, "mim.mp3")},
+        {'ن', Path.Combine(soundMapping, "non.mp3")},
+        {'و', Path.Combine(soundMapping, "ve.mp3")},
+        {'ه', Path.Combine(soundMapping, "he.mp3")},
+        {'ی', Path.Combine(soundMapping, "ye.mp3")},
+        {'إ', Path.Combine(soundMapping, "alf_hamze.mp3")},
+        {'ؤ', Path.Combine(soundMapping, "ve_hamze.mp3")},
+        {'ئ', Path.Combine(soundMapping, "ye_hamze.mp3")},
 
-
-        {'a', @"C:\Users\Artin\Documents\voice files project\a.mp3"},
-        {'b', @"C:\Users\Artin\Documents\voice files project\b.mp3"},
-        {'c', @"C:\Users\Artin\Documents\voice files project\c.mp3"},
-        {'d', @"C:\Users\Artin\Documents\voice files project\d.mp3"},
-        {'e', @"C:\Users\Artin\Documents\voice files project\e.mp3"},
-        {'f', @"C:\Users\Artin\Documents\voice files project\f.mp3"},
-        {'g', @"C:\Users\Artin\Documents\voice files project\g.mp3"},
-        {'h', @"C:\Users\Artin\Documents\voice files project\h.mp3"},
-        {'i', @"C:\Users\Artin\Documents\voice files project\i.mp3"},
-        {'j', @"C:\Users\Artin\Documents\voice files project\j.mp3"},
-        {'k', @"C:\Users\Artin\Documents\voice files project\k.mp3"},
-        {'l', @"C:\Users\Artin\Documents\voice files project\l.mp3"},
-        {'m', @"C:\Users\Artin\Documents\voice files project\m.mp3"},
-        {'n', @"C:\Users\Artin\Documents\voice files project\n.mp3"},
-        {'o', @"C:\Users\Artin\Documents\voice files project\o.mp3"},
-        {'p', @"C:\Users\Artin\Documents\voice files project\p.mp3"},
-        {'q', @"C:\Users\Artin\Documents\voice files project\q.mp3"},
-        {'r', @"C:\Users\Artin\Documents\voice files project\r.mp3"},
-        {'s', @"C:\Users\Artin\Documents\voice files project\s.mp3"},
-        {'t', @"C:\Users\Artin\Documents\voice files project\t.mp3"},
-        {'u', @"C:\Users\Artin\Documents\voice files project\u.mp3"},
-        {'v', @"C:\Users\Artin\Documents\voice files project\v.mp3"},
-        {'w', @"C:\Users\Artin\Documents\voice files project\w.mp3"},
-        {'x', @"C:\Users\Artin\Documents\voice files project\x.mp3"},
-        {'y', @"C:\Users\Artin\Documents\voice files project\y.mp3"},
-        {'z', @"C:\Users\Artin\Documents\voice files project\z.mp3"},
-
-        {'1', @"C:\Users\Artin\Documents\voice files project\1.mp3"},
-        {'2', @"C:\Users\Artin\Documents\voice files project\2.mp3"},
-        {'3', @"C:\Users\Artin\Documents\voice files project\3.mp3"},
-        {'4', @"C:\Users\Artin\Documents\voice files project\4.mp3"},
-        {'5', @"C:\Users\Artin\Documents\voice files project\5.mp3"},
-        {'6', @"C:\Users\Artin\Documents\voice files project\6.mp3"},
-        {'7', @"C:\Users\Artin\Documents\voice files project\7.mp3"},
-        {'8', @"C:\Users\Artin\Documents\voice files project\8.mp3"},
-        {'9', @"C:\Users\Artin\Documents\voice files project\9.mp3"},
+        {'a', Path.Combine(soundMapping, "a.mp3")},
+        {'b', Path.Combine(soundMapping, "b.mp3")},
+        {'c', Path.Combine(soundMapping, "c.mp3")},
+        {'d', Path.Combine(soundMapping, "d.mp3")},
+        {'e', Path.Combine(soundMapping, "e.mp3")},
+        {'f', Path.Combine(soundMapping, "f.mp3")},
+        {'g', Path.Combine(soundMapping, "g.mp3")},
+        {'h', Path.Combine(soundMapping, "h.mp3")},
+        {'i', Path.Combine(soundMapping, "i.mp3")},
+        {'j', Path.Combine(soundMapping, "j.mp3")},
+        {'k', Path.Combine(soundMapping, "k.mp3")},
+        {'l', Path.Combine(soundMapping, "l.mp3")},
+        {'m', Path.Combine(soundMapping, "m.mp3")},
+        {'n', Path.Combine(soundMapping, "n.mp3")},
+        {'o', Path.Combine(soundMapping, "o.mp3")},
+        {'p', Path.Combine(soundMapping, "p.mp3")},
+        {'q', Path.Combine(soundMapping, "q.mp3")},
+        {'r', Path.Combine(soundMapping, "r.mp3")},
+        {'s', Path.Combine(soundMapping, "s.mp3")},
+        {'t', Path.Combine(soundMapping, "t.mp3")},
+        {'u', Path.Combine(soundMapping, "u.mp3")},
+        {'v', Path.Combine(soundMapping, "v.mp3")},
+        {'w', Path.Combine(soundMapping, "w.mp3")},
+        {'x', Path.Combine(soundMapping, "x.mp3")},
+        {'y', Path.Combine(soundMapping, "y.mp3")},
+        {'z', Path.Combine(soundMapping, "z.mp3")},
+        {'0', Path.Combine(soundMapping, "0.mp3")},
+        {'1', Path.Combine(soundMapping, "1.mp3")},
+        {'2', Path.Combine(soundMapping, "2.mp3")},
+        {'3', Path.Combine(soundMapping, "3.mp3")},
+        {'4', Path.Combine(soundMapping, "4.mp3")},
+        {'5', Path.Combine(soundMapping, "5.mp3")},
+        {'6', Path.Combine(soundMapping, "6.mp3")},
+        {'7', Path.Combine(soundMapping, "7.mp3")},
+        {'8', Path.Combine(soundMapping, "8.mp3")},
+        {'9', Path.Combine(soundMapping, "9.mp3")},
         // Add more mappings here
         };
-        }
-
-
-
+    }
 
 
 
 
         private void Form1_Load(object sender, EventArgs e)
-        {
-            
+        {            
             PositionGroupBoxes();
 
-            DocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            mainFolderPath = Path.Combine(DocumentsPath, mainFolder);
 
-            fontFilePath = Path.Combine(DocumentsPath, "subDatas", "dataFiles", "fontList.txt");
-            filePathData = Path.Combine(DocumentsPath, "subDatas", "dataFiles", "data.txt");
-            soundMappingFiles = Path.Combine(DocumentsPath, "subDatas", "voices");
-            wordPath = Path.Combine(DocumentsPath, "wordFiles");
-            // Create a new instance of the Word application
+
+            wordPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "words");
+            userVoicePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "user_voices");
+            filePathData = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "files");
+            mainData = Path.Combine(filePathData, "data.txt");
+            fontFilePath = Path.Combine(filePathData, "fonts.txt");
+
 
             try
             {
+                //make sure they exist and if they dont makeing them
+                if (!Directory.Exists(filePathData))
+                {
+                    Console.WriteLine("Folder not found: " + filePathData);
+                    Directory.CreateDirectory(filePathData);
+                }
 
-                ReadFileIntoList(filePathData, fontFilePath);
-                projecktNummber = File.ReadAllLines(filePathData).Length;
+                if (!File.Exists(mainData))
+                {
+                    Console.WriteLine("file not found: " + mainData);
+                    File.WriteAllText(mainData, "");
+                }
+
+                if (!File.Exists(fontFilePath))
+                {
+                    Console.WriteLine("file not found: " + fontFilePath);
+                    File.WriteAllText(fontFilePath, "");
+                }
+
+                // Check if the folder exists
+                if (!Directory.Exists(wordPath))
+                {
+                    Console.WriteLine("Folder not found: " + wordPath);
+                    Directory.CreateDirectory(wordPath);
+                }
+
+                if (!Directory.Exists(userVoicePath))
+                {
+                    Console.WriteLine("folder users not founded but now is builded" + userVoicePath);
+                    Directory.CreateDirectory(userVoicePath);
+                }
+
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show("ERROR: " + ex.Message);
+            }
+
+
+
+
+            try
+            {
+                ReadFileIntoList(mainData, fontFilePath);
                 Console.WriteLine("****************" + projecktNummber);
                 MessageBox.Show("data loaded seccessfully");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"an error occurred :{ex.Message}");
-            }
-
-
-            if (!Directory.Exists(mainFolder))
-            {
-                Directory.CreateDirectory(mainFolderPath);
-
-                foreach (var folder in subfolder)
-                {
-                    Directory.CreateDirectory(Path.Combine(mainFolderPath, folder));
-                }
-                Console.WriteLine("the first run ! folders maided seccessfully");
-            }
-            else
-            {
-                Console.WriteLine("already exist!");
+                MessageBox.Show($"an error occurred banana:{ex.Message}");
             }
 
             List<int> fontSize = new List<int> { 8, 9, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72 };
-            //size of fonts 
-
+ 
             foreach (int size in fontSize)
             {
                 fontSizeComboBox.Items.Add(size.ToString());
             }
-
-
 
         }
 
@@ -271,23 +294,29 @@ namespace WindowsFormsApp1
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred: {ex.Message}");
+                Console.WriteLine($"An error occurred BANANA : {ex.Message}");
+            }
+
+            if (File.Exists(fontFilePath))
+            {
+                fontNames = File.ReadAllLines(fontFilePath);
+
+            }      
+            else
+            {
+                MessageBox.Show("Font list file not found!");
             }
 
 
 
-            
-
-           
-
-            if (File.Exists(filePath))
+                if (File.Exists(filePath))
             {
                 string[] lines = File.ReadAllLines(filePath);
                 dataList.AddRange(lines);
             }
             else
             {
-                MessageBox.Show("file does not exist");
+                MessageBox.Show("file is empty");
                 return;
             }
 
@@ -331,6 +360,12 @@ namespace WindowsFormsApp1
             {
                 Console.WriteLine($"{alphaList[i]} | {nameList[i]} | {voiceTagList[i]} | {dateList[i]}");
             }
+
+
+
+            //at the end fill up the font list 
+            PopulateFontComboBox();
+
         }
 
 
@@ -447,9 +482,6 @@ namespace WindowsFormsApp1
             }
         }
 
-
-
-
         private void textBox1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             int currentPosition = MainrichTextBox.SelectionStart;
@@ -459,7 +491,7 @@ namespace WindowsFormsApp1
                 try
                 {
                     Console.WriteLine("flag left");
-                    char previousChar = MainrichTextBox.Text[currentPosition];
+                    char previousChar = MainrichTextBox.Text[currentPosition - 1];
                     Console.WriteLine(previousChar);
                     if (soundMappings.ContainsKey(previousChar))
                     {
@@ -476,7 +508,7 @@ namespace WindowsFormsApp1
                 try
                 {
                     Console.WriteLine("flag right");
-                    char nextChar = MainrichTextBox.Text[currentPosition - 1];
+                    char nextChar = MainrichTextBox.Text[currentPosition];
                     Console.WriteLine(nextChar);
                     if (soundMappings.ContainsKey(nextChar))
                     {
@@ -493,66 +525,55 @@ namespace WindowsFormsApp1
 
         private void startparBtn_Click(object sender, EventArgs e)
         {
-            // Get the current cursor position
-            int cursorPosition = MainrichTextBox.SelectionStart;
+            string text = MainrichTextBox.Text;
+            int cursorPos = MainrichTextBox.SelectionStart;
 
-            // Find the start of the current paragraph (the first newline before the cursor)
-            int currentParagraphStart = MainrichTextBox.Text.LastIndexOf(Environment.NewLine, cursorPosition - 1);
+            // Find the [PARA] marker before the current cursor
+            int previousMarker = text.LastIndexOf("[PARA]", cursorPos - 1);
 
-            if (currentParagraphStart > 0)
+            if (previousMarker >= 0)
             {
-                // Find the start of the previous paragraph (the newline before the current paragraph start)
-                int previousParagraphStart = MainrichTextBox.Text.LastIndexOf(Environment.NewLine, currentParagraphStart - 1);
-
-                // If a previous paragraph was found, move the cursor to the character after the previous paragraph's newline
-                // If no previous newline, move to the start of the text
-                MainrichTextBox.SelectionStart = previousParagraphStart >= 0 ? previousParagraphStart + Environment.NewLine.Length : 0;
+                MainrichTextBox.SelectionStart = previousMarker;
             }
             else
             {
-                // If the cursor is in the first paragraph, move to the start of the text
+                // If no marker found, go to start
                 MainrichTextBox.SelectionStart = 0;
             }
 
-            // Scroll to the cursor position and focus the textbox
             MainrichTextBox.ScrollToCaret();
             MainrichTextBox.Focus();
         }
 
 
 
-
-
         private void endparBtn_Click(object sender, EventArgs e)
         {
+            string text = MainrichTextBox.Text;
+            int cursorPos = MainrichTextBox.SelectionStart;
 
-            // Get the current cursor position
-            int cursorPosition = MainrichTextBox.SelectionStart;
+            int lastMarkerBeforeCursor = text.LastIndexOf("[PARA]", cursorPos - 1);
 
-            // Find the start of the current paragraph (the first newline before the cursor)
-            int currentParagraphStart = MainrichTextBox.Text.LastIndexOf(Environment.NewLine, cursorPosition - 1);
-
-            if (currentParagraphStart > 0)
+            if (lastMarkerBeforeCursor >= 0)
             {
-                // Find the start of the previous paragraph (another newline before the current paragraph)
-                int previousParagraphStart = MainrichTextBox.Text.LastIndexOf(Environment.NewLine, currentParagraphStart - 1);
-
-                // Move the cursor to the start of the previous paragraph
-                MainrichTextBox.SelectionStart = previousParagraphStart >= 0 ? previousParagraphStart + Environment.NewLine.Length : 0;
-
-                // Scroll to the cursor position
+                // Move cursor to the END of that marker
+                int newPosition = lastMarkerBeforeCursor + "[PARA]".Length;
+                MainrichTextBox.SelectionStart = newPosition;
                 MainrichTextBox.ScrollToCaret();
                 MainrichTextBox.Focus();
             }
             else
             {
-                // If no previous paragraph, move to the very start of the text
+                // No marker found, go to start
                 MainrichTextBox.SelectionStart = 0;
                 MainrichTextBox.ScrollToCaret();
                 MainrichTextBox.Focus();
             }
-
         }
+
+
+
+
 
         private void startsentBtn_Click(object sender, EventArgs e)
         {
@@ -595,14 +616,6 @@ namespace WindowsFormsApp1
         }
 
 
-
-        public int[] savedCarentPosiotion = new int[10];
-        public int countBmark = 1;
-
-
-
-
-
         private void Recording()
         {
             try
@@ -641,8 +654,7 @@ namespace WindowsFormsApp1
             }
         }
 
-        private bool isRecording = false;
-        private bool isWaitingForKey = false;
+
 
         private void button7_Click(object sender, EventArgs e)
         {
@@ -659,6 +671,14 @@ namespace WindowsFormsApp1
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true; // Stop default newline
+                int position = MainrichTextBox.SelectionStart;
+                MainrichTextBox.Text = MainrichTextBox.Text.Insert(position, "[PARA]\n");
+                MainrichTextBox.SelectionStart = position + "[PARA]\n".Length;
+            }
+
             if (isWaitingForKey)
             {
                 if (e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
@@ -687,6 +707,8 @@ namespace WindowsFormsApp1
                 MainrichTextBox.SelectionStart = textPlace + 1;
                 MainrichTextBox.Focus();
             }
+
+            
         }
 
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
@@ -935,15 +957,17 @@ namespace WindowsFormsApp1
         private void saveBtn_Click(object sender, EventArgs e)
         {
 
-
             if (string.IsNullOrWhiteSpace(textBox2.Text))
             {
                 DialogResult result = MessageBox.Show("The file is new. Do you want to save it?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (result == DialogResult.Yes)
                 {
-                    // Handle the "Yes" button click (e.g., save the file)
-                    // Attach the event handler for the saveAsBtn.Click event here
-                    this.saveAsBtn.Click += saveAsBtn_Click;
+                    textBox2.Enabled = true;
+                    textBox2.Focus();
+
+                    this.textBox2.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
+                    this.textBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
+
                 }
                 else
                 {
@@ -952,13 +976,13 @@ namespace WindowsFormsApp1
             }
 
             string wordFileName = $"{textBox2.Text}.docx";
-            string wordFilePath = Path.Combine(DocumentsPath, "wordFiles", wordFileName);
+            //string wordFilePath = Path.Combine(DocumentsPath, "wordFiles", wordFileName);
             
-            string voiceFilePath = Path.Combine(DocumentsPath, "subDatas", "voices", wordFileName);
+            //string voiceFilePath = Path.Combine(DocumentsPath, "subDatas", "voices", wordFileName);
 
-            bool wordFileExists = File.Exists(wordFilePath);
-            bool voiceFileExists = File.Exists(voiceFilePath);
-
+            //bool wordFileExists = File.Exists(wordFilePath);
+            //bool voiceFileExists = File.Exists(voiceFilePath);
+            /*
             if (wordFileExists && voiceFileExists)
             {
                 SaveTextToWordFile(wordFilePath, MainrichTextBox.Text);
@@ -973,6 +997,7 @@ namespace WindowsFormsApp1
                     saveAsBtn_Click(sender, e);
                 }
             }
+            */
         }
 
         private void SaveTextToWordFile(string filePath, string text)
@@ -1012,6 +1037,7 @@ namespace WindowsFormsApp1
 
         private void ListBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            
             // Get the selected index
             int index = listBox1.SelectedIndex;
 
@@ -1029,9 +1055,10 @@ namespace WindowsFormsApp1
                     // Replace ".docx" with an empty string in the file name
                     string fileNameWithoutExtension = selectedFileName.Replace(".docx", "");
 
-                    string voiceTag = Path.Combine(DocumentsPath, "subDatas", "voices", $"{fileNameWithoutExtension}.wav");
+                    string voiceTag = Path.Combine(userVoicePath, $"{fileNameWithoutExtension}.wav");
 
                     Console.WriteLine("Playing voice tag: " + voiceTag);
+                 
                     try
                     {
                         // Check if the voice tag file exists
@@ -1059,6 +1086,7 @@ namespace WindowsFormsApp1
             {
                 Console.WriteLine("No item is selected");
             }
+                 
         }
 
 
@@ -1079,7 +1107,7 @@ namespace WindowsFormsApp1
                     {
                         string fileNameWithoutExtension = wordName.Replace(".docx", "");
 
-                        string voiceTag = Path.Combine(DocumentsPath, "subDatas", "voices", $"{fileNameWithoutExtension}.wav");
+                        string voiceTag = Path.Combine(userVoicePath, $"{fileNameWithoutExtension}.wav");
                         string wordFilePath = Path.Combine(wordPath, wordName);
 
                         // Try to delete the voice file
@@ -1087,9 +1115,7 @@ namespace WindowsFormsApp1
                         {
                             try
                             {
-                                
-                                
-
+                                                              
                                 // Delete the voice file
                                 File.Delete(voiceTag);
                                 MessageBox.Show($"Voice file deleted: {voiceTag}");
@@ -1113,9 +1139,6 @@ namespace WindowsFormsApp1
                         {
                             try
                             {
-                                // Attempt to close the file if it is open elsewhere
-                                
-
                                 // Delete the Word file
                                 File.Delete(wordFilePath);
                                 MessageBox.Show($"Word file deleted: {wordFilePath}");
@@ -1174,6 +1197,7 @@ namespace WindowsFormsApp1
 
                 if (!string.IsNullOrEmpty(MainrichTextBox.Text))
                 {
+                    
                     DialogResult result = MessageBox.Show("Are you sure you want to discard the changes?", "Alert", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (result == DialogResult.Yes)
                     {
@@ -1182,8 +1206,8 @@ namespace WindowsFormsApp1
                     }
                     else
                     {
-                        // Only add the event handler once, or ensure it's added only if it's not already attached
-                        this.saveBtn.Click -= saveBtn_Click; // Remove if already attached
+
+                        this.saveBtn.Click -= saveBtn_Click;
                         this.saveBtn.Click += saveBtn_Click;
                     }
                 }
@@ -1193,18 +1217,33 @@ namespace WindowsFormsApp1
                 {
                     Console.WriteLine(index);
                     wordName = listBox1.SelectedItem.ToString();
-                    // Check if the index is within the range of voiceTagList
+                    
                     if (index >= 0 && index < allDocxFiles.Count)
                     {
                         wordName.Replace(".docx", "");
-                        string addressToOpen = Path.Combine(DocumentsPath, "wordFiles", wordName);
-                        MainrichTextBox.Text = openWordDocument(addressToOpen);
+                        string addressToOpen = Path.Combine(wordPath, wordName);
+                        var wordApp = new Microsoft.Office.Interop.Word.Application();
+                        Document doc = wordApp.Documents.Open(addressToOpen, ReadOnly: false, Visible: false);
+                        doc.Range().Copy(); // Standard copy preserves editable RTF
+
+                        // Get data from clipboard as RTF
+                        IDataObject data = Clipboard.GetDataObject();
+                        if (data.GetDataPresent(DataFormats.Rtf))
+                        {
+                            string rtfContent = (string)data.GetData(DataFormats.Rtf);
+                            // Load full editable formatted content into RichTextBox
+                            MainrichTextBox.Rtf = rtfContent;
+                        }
+
+                        // Cleanup
+                        doc.Close(false);
                         textBox2.Text = wordName;
                     }
                     else
                     {
                         Console.WriteLine("Index out of range for voiceTagList");
                     }
+
                 }
             }
 
@@ -1278,8 +1317,8 @@ namespace WindowsFormsApp1
                 string newWordFile = Path.Combine(wordPath, $"{textBox2.Text}.docx");
 
                 wordname = wordname.Replace(".docx", "");
-                string oldVoiceTag = Path.Combine(mainFolderPath, "voices", $"{wordname}0.wav");
-                string newVoiceTag = Path.Combine(mainFolderPath, "voices", $"{textBox2.Text}0.wav");
+                string oldVoiceTag = Path.Combine(userVoicePath, $"{wordname}0.wav");
+                string newVoiceTag = Path.Combine(userVoicePath, "voices", $"{textBox2.Text}0.wav");
 
                 try
                 {
@@ -1372,17 +1411,12 @@ namespace WindowsFormsApp1
 
         private void ManageFiles()
         {
-            string wordFolder = Path.Combine(DocumentsPath, "wordFiles");
+            
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_keyPress);
             this.KeyPress -= new System.Windows.Forms.KeyPressEventHandler(this.Form1_keyPress);
         }
 
 
-
-        private void starttextBtn_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void textBox2_keyPress(object sender, KeyPressEventArgs e)
         {
@@ -1398,50 +1432,7 @@ namespace WindowsFormsApp1
             printer.Print();
         }
 
-/*
-    private void savePdfBtn_Click(object sender, EventArgs e)
-    {
-        try
-        {
-            // Ensure the output directory exists
-            string outputDir = Path.Combine(DocumentsPath, "subDatas", "pdf folder");
-            if (!Directory.Exists(outputDir))
-            {
-                Directory.CreateDirectory(outputDir);
-            }
 
-            // File path to save the PDF
-            string outputFile = Path.Combine(outputDir, $"{textBox2.Text}.pdf");
-
-            // Create a PDF document
-            Document document = new Document();
-            using (FileStream fs = new FileStream(outputFile, FileMode.Create, FileAccess.Write, FileShare.None))
-            {
-                PdfWriter writer = PdfWriter.GetInstance(document, fs);
-                document.Open();
-
-                // Use a font that supports Arabic
-                BaseFont baseFont = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-                iTextSharp.text.Font font = new iTextSharp.text.Font(baseFont, 12);
-
-                // Add content to the document using the specified font
-                Paragraph paragraph = new Paragraph(MainrichTextBox.Text, font)
-                {
-                    Alignment = Element.ALIGN_RIGHT // Align text to the right for Arabic
-                };
-                document.Add(paragraph);
-
-                document.Close();
-            }
-
-            MessageBox.Show("PDF created successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"An error occurred while creating the PDF: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-    }
-*/
 
         private void saveAsBtn_Click(object sender, EventArgs e)
         {
@@ -1454,11 +1445,8 @@ namespace WindowsFormsApp1
 
             this.textBox2.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
             this.textBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
-
-
-
-
         }
+
         private async void textBox2_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter && textBox2.Text != null)
@@ -1467,31 +1455,35 @@ namespace WindowsFormsApp1
                 string dateTimeString = currentDateTime.ToString("yyyy-MM-dd HH:mm:ss");
 
                 wordName = textBox2.Text;
-                wordFilePath = Path.Combine(DocumentsPath, "wordFiles", $"{wordName}.docx");
 
-                CreateWordDocument(wordFilePath);
-
-                MessageBox.Show("Press a key", "Press key", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-
-                // Detach previous handlers to avoid multiple subscriptions
+                
+                textBox2.Enabled = false;
+                // MessageBox.Show("Press a key", "Press key", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
-                this.Enabled = false;
+
+
+                
+
+                
+
+                
                 // Attach new handlers
                 this.KeyDown += new KeyEventHandler(Form1_keyDown);
-                textBox2.Enabled = false;
+                
 
-                outputFilePath = Path.Combine(mainFolderPath, "voices", $"{wordName}.wav");
+                outputFilePath = Path.Combine(userVoicePath, $"{wordName}.wav");
                 this.KeyUp += new KeyEventHandler(Form1_keyUp);
 
                 this.Enabled = true;
                 await WaitForKeyPressAsync();
-                //this.Enabled = true;
+                 
 
-
-
-
+                if (string.IsNullOrEmpty(pressedChar) || !char.IsLetterOrDigit(pressedChar[0]))
+                {
+                    Console.WriteLine("Ignored key: " + pressedChar);
+                    return;
+                }
 
                 // Check if any item in alphaList starts with pressedChar followed by a possible index
                 if (alphaList.Any(item => item.StartsWith(pressedChar)))
@@ -1575,19 +1567,9 @@ namespace WindowsFormsApp1
                 // Start the alarm
                 beepTimer.Start();
                 isAlarmActive = true;
-                // Check if the selected item has changed
 
-
-                removeItemsListBox();
-                populateFontListBox();
-                listBox1.Focus();
-               
-
-                // Update the last selected item
                
             }
-
-
 
             insertBtn.Visible = !insertBtn.Visible;
             gotoBtn.Visible = !gotoBtn.Visible;
@@ -1612,112 +1594,8 @@ namespace WindowsFormsApp1
             
         }
 
-        private void populateFontListBox()
-        {
-            listBox1.Items.Clear();
-            fontList.Clear();
-            using (StreamReader reader = new StreamReader(fontFilePath, true))
-            {
-                while (!reader.EndOfStream)
-                {
-                    string item = reader.ReadLine();
-                    fontList.Add(item);
-                }
-            }
 
 
-
-            foreach (string font in fontList)
-            {
-                string[] fonts = font.Split('|');
-                for (int i = 0; i < fonts.Length; i++)
-                {
-                    if (i % 3 == 1) // Check if the index is odd
-                    {
-                        listBox1.Items.Add(fonts[i]);
-                        // Add the odd-numbered element to your ListBox (listBox1.Items.Add(...))
-                    }
-                }
-
-            }
-
-            this.listBox1.KeyDown += new KeyEventHandler(this.listBox_KeyDown_Font);
-
-        }
-
-        private void listBox_KeyDown_Font(object sender, KeyEventArgs e)
-        {
-            int index = listBox1.SelectedIndex;
-
-            if (index != -1) // Check if an item is selected
-            {
-                if (e.KeyCode == Keys.Delete)
-                
-                    // Ensure index is within valid range for allDocxFiles
-                    if (index >= 0 && index < allDocxFiles.Count)
-                    {
-                        string voiceName = listBox1.SelectedIndex.ToString();
-
-
-                        string voiceTag = Path.Combine(DocumentsPath, "subDatas", "voices", $"{voiceName}.wav");
-                        
-
-                        // Try to delete the voice file
-                        if (File.Exists(voiceTag))
-                        {
-                            try
-                            {
-                                // Attempt to close the file if it is open elsewhere
-
-
-                                // Delete the voice file
-                                File.Delete(voiceTag);
-                                MessageBox.Show($"Voice file deleted: {voiceTag}");
-                            }
-                            catch (IOException ex)
-                            {
-                                MessageBox.Show($"Error: The file is in use and cannot be deleted. Please close any program that might be using it.\nDetails: {ex.Message}");
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show($"Error deleting voice file: {ex.Message}");
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("Voice file does not exist.");
-                        }
-
-
-                        try
-                        {
-                            fontList.RemoveAt(index);
-
-                            // Save updated dataList to file
-                            using (StreamWriter writer = new StreamWriter(fontFilePath, false)) // false to overwrite the file
-                            {
-                                foreach (var item in fontList)
-                                {
-                                    writer.WriteLine(item); // Write each item on a new line
-                                }
-                            }
-                            Console.WriteLine("Data list updated and saved.");
-
-                            // Remove the item from the ListBox
-                            listBox1.Items.RemoveAt(index);
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show($"Error updating data list: {ex.Message}");
-                        }
-
-                    }   
-                    else
-                    {
-                        MessageBox.Show("No item selected. Please select an item to delete.");
-                    }
-            }
-        }
 
         private void changeColor_Click(object sender, EventArgs e)
         {
@@ -1822,14 +1700,28 @@ namespace WindowsFormsApp1
 
         private void PopulateFontComboBox()
         {
-            InstalledFontCollection installedFonts = new InstalledFontCollection();
-            var fontFamilies = installedFonts.Families.OrderBy(f => f.Name);
-
-            foreach (var font in fontFamilies)
+            fontComboBox.Items.Clear();
+            
+            foreach (string fontName in fontNames)
             {
-                fontComboBox.Items.Add(font.Name);
+                // Optional: verify that the font is installed
+                if (FontFamily.Families.Any(f => f.Name.Equals(fontName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    fontComboBox.Items.Add(fontName);
+                }
+                else
+                {
+                    Console.WriteLine($"Font not installed: {fontName}");
+                }
+
+                if (fontComboBox.Items.Count > 0)
+                {
+                    fontComboBox.SelectedIndex = 0; // Select first font
+                }
+
             }
         }
+
 
         private void FontComboBox_DrawItem(object sender, DrawItemEventArgs e)
         {
@@ -1847,62 +1739,50 @@ namespace WindowsFormsApp1
             e.DrawFocusRectangle();
         }
 
-        private void FontComboBox_MeasureItem(object sender, MeasureItemEventArgs e)
-        {
-            if (e.Index >= 0)
-            {
-                string fontName = fontComboBox.Items[e.Index].ToString();
-                using (System.Drawing.Font font = new System.Drawing.Font(fontName, 10, FontStyle.Regular, GraphicsUnit.Point))
-                {
-                    SizeF size = e.Graphics.MeasureString(fontName, font);
-                    e.ItemHeight = (int)size.Height;
-                    e.ItemWidth = (int)size.Width;
-                }
-            }
-        }
-        /*
+
         private void FontComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (fontList.Count >= 10)
-            {
-                MessageBox.Show("you cant add more than 10 fonts in your list");
-                return;
-            }
-
             if (fontComboBox.SelectedItem != null)
             {
-                getComboItem(fontComboBox.SelectedItem.ToString());
+                string selectedFont = fontComboBox.SelectedItem.ToString();
+                ChangeSelectedFontFamily(selectedFont);
             }
         }
 
-        private async void getComboItem(string selectedFont)
+
+        private void fontSizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Add the selected font to the fontList
-            if (!fontList.Contains(selectedFont))
+            if (float.TryParse(fontSizeComboBox.SelectedItem?.ToString(), out float selectedSize))
             {
-                fontList.Add(selectedFont);
+                ChangeSelectedFontSize(selectedSize);
             }
-
-            // Set the output file path
-            
-
-            // Ensure KeyDown and KeyUp event handlers are added only once
-            this.KeyDown -= Form1_keyDown;
-            this.KeyDown += Form1_keyDown;
-            outputFilePath = Path.Combine(mainFolderPath, "voices", $"{selectedFont}.wav");
-            
-            this.KeyUp -= Form1_keyUp;
-            this.KeyUp += Form1_keyUp;
-
-
-            await WaitForKeyPressAsync();
-            this.KeyDown -= Form1_keyDown;
-            this.KeyUp -= Form1_keyUp;
-
-            saveFontFile(selectedFont);
-           
+            else
+            {
+                MessageBox.Show("error");
+            }
         }
-*/
+
+
+        private void ChangeSelectedFontFamily(string newFontFamily)
+        {
+            if (MainrichTextBox.SelectionFont != null)
+            {
+                System.Drawing.Font currentFont = MainrichTextBox.SelectionFont;
+                System.Drawing.Font newFont = new System.Drawing.Font(newFontFamily, currentFont.Size, currentFont.Style);
+                MainrichTextBox.SelectionFont = newFont;
+            }
+        }
+
+        private void ChangeSelectedFontSize(float newSize)
+        {
+            if (MainrichTextBox.SelectionFont != null)
+            {
+                System.Drawing.Font currentFont = MainrichTextBox.SelectionFont;
+                System.Drawing.Font newFont = new System.Drawing.Font(currentFont.FontFamily, newSize, currentFont.Style);
+                MainrichTextBox.SelectionFont = newFont;
+            }
+        }
+
 
         private void saveFontFile(string selectedFont)
         {
@@ -1933,46 +1813,6 @@ namespace WindowsFormsApp1
                 e.Handled = true;
             }
         }
-
-   
-        private void fontSizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            updateFontSize();
-
-            if (fontSizeComboBox.SelectedItem != null)
-            {
-                string selectedSize = fontSizeComboBox.SelectedItem.ToString();
-                MessageBox.Show($"Selected font: {selectedSize}");
-            }
-        }
-
-        private void updateFontSize()
-        {
-            if(int.TryParse(fontSizeComboBox.Text, out int newSize))
-            {
-                MainrichTextBox.Font = new System.Drawing.Font(MainrichTextBox.Font.FontFamily, newSize);
-            }
-            else
-            {
-                MessageBox.Show("enter valid number");
-            }
-        }
-
-        private void fontSizeComboBox_keyPress(object sender , KeyPressEventArgs e)
-        {
-        
-            if(!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-            {
-                e.Handled = true;
-            }
-
-            if(e.KeyChar == (char)Keys.Enter)
-            {
-                updateFontSize();
-            }
-        }
-
-
 
         private void statusBtn_Click(object sender, EventArgs e)
         {

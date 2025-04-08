@@ -1,4 +1,5 @@
 ﻿using Microsoft.Office.Interop.Word;
+using System;
 
 namespace WindowsFormsApp1
 {
@@ -175,7 +176,7 @@ namespace WindowsFormsApp1
             this.starttextBtn.Text = "شروع متن";
             this.starttextBtn.UseVisualStyleBackColor = true;
             this.starttextBtn.Visible = false;
-            this.starttextBtn.Click += new System.EventHandler(this.starttextBtn_Click);
+
             // 
             // exitBtn
             // 
@@ -256,7 +257,6 @@ namespace WindowsFormsApp1
             this.fontSizeComboBox.TabIndex = 26;
             this.fontSizeComboBox.Visible = false;
             this.fontSizeComboBox.SelectedIndexChanged += new System.EventHandler(this.fontSizeComboBox_SelectedIndexChanged);
-            this.fontSizeComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.fontSizeComboBox_keyPress);
             // 
             // fontComboBox
             // 
@@ -268,7 +268,7 @@ namespace WindowsFormsApp1
             this.fontComboBox.TabIndex = 0;
             this.fontComboBox.Visible = false;
             this.fontComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.FontComboBox_DrawItem);
-            this.fontComboBox.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.FontComboBox_MeasureItem);
+            this.fontComboBox.SelectedIndexChanged += new EventHandler(this.FontComboBox_SelectedIndexChanged); 
             this.fontComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ComboBox_KeyPress);
             // 
             // savePdfBtn
@@ -590,7 +590,8 @@ namespace WindowsFormsApp1
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBox2;
-       
+        private System.Windows.Forms.Button saveBtn;
+
         private System.Windows.Forms.Button saveAsBtn;
         private System.Windows.Forms.Button savePdfBtn;
         private System.Windows.Forms.Button statusBtn;
