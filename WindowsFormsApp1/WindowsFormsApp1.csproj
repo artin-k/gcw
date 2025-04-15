@@ -202,9 +202,5 @@
   <ItemGroup>
     <Content Include="TextFile1.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="user_voices\" />
-    <Folder Include="words\" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
