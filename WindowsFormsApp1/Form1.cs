@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Word =  Microsoft.Office.Interop.Word;
-
+using Spire.Doc;
 
 using NAudio.Wave;
 
@@ -50,12 +50,12 @@ namespace WindowsFormsApp1
         static int newVoice = 0;
         //static int newFile = 0;
         private WaveInEvent waveIn;
-        private WaveFileWriter writer;        
+        private WaveFileWriter writer;
         private IWavePlayer waveOutDevice;
         private AudioFileReader audioFileReader;
-       
 
-        string textBoxValue;
+
+
         private bool isRecording = false;
         private bool isWaitingForKey = false;
 
@@ -74,9 +74,9 @@ namespace WindowsFormsApp1
         private AudioFileReader audioFile;
         private WaveOutEvent outputDevice;
 
-        
+
         string soundMapping = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "soundDictionary");
-        
+
         private Dictionary<char, string> soundMappings;
 
         // opening save the style in the word 
@@ -87,11 +87,11 @@ namespace WindowsFormsApp1
         {
             this.KeyPreview = true;
             InitializeComponent();
-            
+
             InitializeTimer();
             InitializeSoundMappings();
             this.MainrichTextBox.PreviewKeyDown += new PreviewKeyDownEventHandler(textBox1_PreviewKeyDown);
-           
+
         }
 
         private void InitializeTimer() //this make a timer for alarm group
@@ -99,17 +99,17 @@ namespace WindowsFormsApp1
             beepTimer = new Timer();
             beepTimer.Interval = 2000; // 2 seconds
             beepTimer.Tick += BeepTimer_Tick;
-            
+
         }
-        
+
 
         //83899518
-     
+
 
         private void InitializeSoundMappings()
         {
             soundMappings = new Dictionary<char, string>
-        { 
+        {
         {'ا', Path.Combine(soundMapping, "alef.mp3")},
         {'ب', Path.Combine(soundMapping, "be.mp3")},
         {'پ', Path.Combine(soundMapping, "pe.mp3")},
@@ -184,13 +184,13 @@ namespace WindowsFormsApp1
         {'9', Path.Combine(soundMapping, "9.mp3")},
         // Add more mappings here
         };
-    }
+        }
 
 
 
 
         private void Form1_Load(object sender, EventArgs e)
-        {            
+        {
             PositionGroupBoxes();
 
 
@@ -258,7 +258,7 @@ namespace WindowsFormsApp1
             }
 
             List<int> fontSize = new List<int> { 8, 9, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72 };
- 
+
             foreach (int size in fontSize)
             {
                 fontSizeComboBox.Items.Add(size.ToString());
@@ -267,7 +267,7 @@ namespace WindowsFormsApp1
         }
 
 
-        private void ReadFileIntoList(string filePath,string fontFilePath)
+        private void ReadFileIntoList(string filePath, string fontFilePath)
         {
             allDocxFiles.Clear();
             dataList.Clear();
@@ -301,7 +301,7 @@ namespace WindowsFormsApp1
             {
                 fontNames = File.ReadAllLines(fontFilePath);
 
-            }      
+            }
             else
             {
                 MessageBox.Show("Font list file not found!");
@@ -309,7 +309,7 @@ namespace WindowsFormsApp1
 
 
 
-                if (File.Exists(filePath))
+            if (File.Exists(filePath))
             {
                 string[] lines = File.ReadAllLines(filePath);
                 dataList.AddRange(lines);
@@ -616,7 +616,7 @@ namespace WindowsFormsApp1
         }
 
 
-        private void Recording()
+        private void Recording(string path)
         {
             try
             {
@@ -624,9 +624,9 @@ namespace WindowsFormsApp1
                 waveIn.WaveFormat = new WaveFormat(44100, 1);
                 waveIn.DataAvailable += OnDataAvailable;
                 waveIn.RecordingStopped += onRecordingStopped;
-
-
-                writer = new WaveFileWriter(outputFilePath, waveIn.WaveFormat);
+                //string lastAdded = alphaList[alphaList.Count - 1];
+                
+                writer = new WaveFileWriter(path, waveIn.WaveFormat);
 
                 waveIn.StartRecording();
 
@@ -645,16 +645,36 @@ namespace WindowsFormsApp1
                 if (waveIn != null)
                 {
                     waveIn.StopRecording();
+                    waveIn.Dispose(); // Close the waveIn object
+
                     label1.Visible = false;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An error occurred while stopping the recording: " + ex.Message);
+                Console.WriteLine("An error occurred while stopping the recording: " + ex.Message);
             }
         }
 
-
+        public double GetAudioDuration(string filePath)
+        {
+            try
+            {
+                using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var audioFile = new WaveFileReader(fileStream))
+                {
+                    // Get the total time span of the audio file
+                    TimeSpan duration = audioFile.TotalTime;
+                    // Return the total duration in seconds
+                    return duration.TotalSeconds;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"an error ocurred:{ex.Message}");
+                return -1;
+            }
+        }
 
         private void button7_Click(object sender, EventArgs e)
         {
@@ -667,6 +687,7 @@ namespace WindowsFormsApp1
             MessageBox.Show("push a key");
 
             isWaitingForKey = true; // <---- Activate waiting mode
+
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
@@ -683,6 +704,7 @@ namespace WindowsFormsApp1
             {
                 if (e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
                 {
+                    voice = Path.Combine(userVoicePath, $"{ e.KeyCode.ToString()}.wav");
                     HandleAlphabetKeyDown(e.KeyCode);
                 }
                 else
@@ -692,7 +714,7 @@ namespace WindowsFormsApp1
             }
         }
 
-        private void HandleAlphabetKeyDown(Keys key)
+        private async void HandleAlphabetKeyDown(Keys key)
         {
             if (!isRecording)
             {
@@ -700,15 +722,15 @@ namespace WindowsFormsApp1
                 isWaitingForKey = false; // <--- Exit waiting mode after key
                 MainrichTextBox.ReadOnly = true;
 
-                Recording();
+                Recording(path);
+
+                await WaitForKeyPressAsync(); // wait until key up
 
                 int textPlace = MainrichTextBox.SelectionStart;
                 MainrichTextBox.Text = MainrichTextBox.Text.Substring(0, textPlace) + key + MainrichTextBox.Text.Substring(textPlace);
                 MainrichTextBox.SelectionStart = textPlace + 1;
                 MainrichTextBox.Focus();
             }
-
-            
         }
 
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
@@ -718,6 +740,9 @@ namespace WindowsFormsApp1
                 stopRecording();
                 isRecording = false;
                 MainrichTextBox.ReadOnly = false;
+
+                //  Mark the Task as complete
+                keyPressTcs?.TrySetResult(true);
             }
         }
 
@@ -832,6 +857,15 @@ namespace WindowsFormsApp1
             this.bookMarkBtn.Visible = !this.bookMarkBtn.Visible;
         }
 
+        private TaskCompletionSource<bool> keyPressTcs;
+
+
+        private async System.Threading.Tasks.Task WaitForKeyPressAsync()
+        {
+            keyPressTcs = new TaskCompletionSource<bool>();
+            await keyPressTcs.Task;
+        }
+
         private void gotoBtn_Click(object sender, EventArgs e)
         {
             this.startparBtn.Visible = !this.startparBtn.Visible;
@@ -846,58 +880,21 @@ namespace WindowsFormsApp1
 
         private void gotoBmark_Click(object sender, EventArgs e)
         {
-            string Bname;
-            textBoxValue = MainrichTextBox.Text;
+            int dotIndex; // bookmark character
+            string textBoxValue = MainrichTextBox.Text;
+            bMarkList.Items.Clear();
+
             for (int i = 0; i < textBoxValue.Length; i++)
             {
-                if (i.ToString() == "ˑ")
+                if (textBoxValue[i] == 'ˑ')//special dot 
                 {
-                    Bname = (i++).ToString();
-                    listBox1.Items.Add(Bname);
+                    dotIndex = textBoxValue.IndexOf('ˑ', i);
 
+                    char charBeforeDot = textBoxValue[dotIndex - 1];
+                    bMarkList.Items.Add(charBeforeDot.ToString());
                 }
             }
-
-
         }
-
-
-        private void CreateWordDocument(string filePath)
-        {
-
-            Word.Application wordApp = null;
-            Word.Document wordDoc = null;
-            try
-            {
-                wordApp = new Word.Application();
-                wordDoc = wordApp.Documents.Add();
-
-                wordDoc.Content.Text = MainrichTextBox.Text;
-                wordDoc.SaveAs2(filePath);
-                MessageBox.Show($"Word document created: {filePath}");
-            }
-            catch (Exception er)
-            {
-                MessageBox.Show($"An error occurred: {er.Message}");
-            }
-            finally
-            {
-                if (wordDoc != null)
-                {
-                    wordDoc.Close(false);
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject(wordDoc);
-                }
-                if (wordApp != null)
-                {
-                    wordApp.Quit(false);
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject(wordApp);
-                }
-            }
-
-
-
-        }
-
 
         private void Form1_keyDown(object sender, KeyEventArgs e)
         {
@@ -907,7 +904,7 @@ namespace WindowsFormsApp1
             {
                 pressedChar = e.KeyCode.ToString();
                 Console.WriteLine("keydown" + pressedChar);
-                handelRecording(e.KeyCode);
+                HandleAlphabetKeyDown(e.KeyCode, outputFilePath);
 
             }
             else
@@ -918,45 +915,38 @@ namespace WindowsFormsApp1
 
         }
 
-        private void handelRecording(Keys key)
-        {
-            if (!isRecording)
-            {
-                isRecording = true;
-
-
-                Recording();
-
-            }
-
-        }
 
         private void Form1_keyUp(object sender, KeyEventArgs e)
         {
 
-            if (isRecording)
+            if (isRecording && keyPressTcs != null)
             {
+                keyPressTcs.TrySetResult(true);
                 stopRecording();
                 isRecording = false;
+                double voiceTime = GetAudioDuration(voiceOutFilePath);
+                if (voiceTime < 1)
+                {
+                    MessageBox.Show("too short voice");
 
+                    return;
+                }
             }
-            keyPressTcs.TrySetResult(true);
+            
         }
 
-        private TaskCompletionSource<bool> keyPressTcs;
 
-
-        private async System.Threading.Tasks.Task WaitForKeyPressAsync()
-        {
-            keyPressTcs = new TaskCompletionSource<bool>();
-            await keyPressTcs.Task;
-        }
 
 
         // Ensure pressedChar is initialized
         private void saveBtn_Click(object sender, EventArgs e)
         {
+            saveingFunc();
+        }
 
+        public void saveingFunc()
+        {
+            MessageBox.Show("Save button clicked!");
             if (string.IsNullOrWhiteSpace(textBox2.Text))
             {
                 DialogResult result = MessageBox.Show("The file is new. Do you want to save it?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
@@ -976,75 +966,32 @@ namespace WindowsFormsApp1
             }
 
             string wordFileName = $"{textBox2.Text}.docx";
-            //string wordFilePath = Path.Combine(DocumentsPath, "wordFiles", wordFileName);
-            
-            //string voiceFilePath = Path.Combine(DocumentsPath, "subDatas", "voices", wordFileName);
-
-            //bool wordFileExists = File.Exists(wordFilePath);
-            //bool voiceFileExists = File.Exists(voiceFilePath);
-            /*
-            if (wordFileExists && voiceFileExists)
-            {
-                SaveTextToWordFile(wordFilePath, MainrichTextBox.Text);
-                MessageBox.Show("Data saved successfully.");
-            }
-            else
-            {
-                DialogResult result = MessageBox.Show("The Word document or voice file doesn't exist. Do you want to create a new file?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                if (result == DialogResult.Yes)
-                {
-                    // Assuming saveAsBtn_Click is intended to handle creating new files
-                    saveAsBtn_Click(sender, e);
-                }
-            }
-            */
         }
 
-        private void SaveTextToWordFile(string filePath, string text)
-        {
-            Word.Application wordApp = new Word.Application();
-            Word.Document wordDoc = null;
-
-            try
-            {
-                wordDoc = wordApp.Documents.Add();
-                wordDoc.Content.Text = text;
-                wordDoc.SaveAs2(filePath);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error saving document: {ex.Message}");
-            }
-            finally
-            {
-                wordDoc?.Close();
-                wordApp.Quit();
-            }
-        }
 
         private void PopulateListBoxOpen() //to be change haie
         {
-            listBox1.Items.Clear();
+            filesListBox.Items.Clear();
 
             for (int i = 0; i < allDocxFiles.Count; i++)
             {
 
-                listBox1.Items.Add(Path.GetFileName(allDocxFiles[i]));
+                filesListBox.Items.Add(Path.GetFileName(allDocxFiles[i]));
             }
-            this.listBox1.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.listBox1_keyDown);
-            this.listBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listBox1_keyDown);
+            this.filesListBox.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.listBox1_keyDown);
+            this.filesListBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listBox1_keyDown);
         }
 
         private void ListBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            
+
             // Get the selected index
-            int index = listBox1.SelectedIndex;
+            int index = filesListBox.SelectedIndex;
 
             // Check if an item is selected
             if (index != -1)
             {
-                string selectedFileName = listBox1.SelectedItem.ToString();
+                string selectedFileName = filesListBox.SelectedItem.ToString();
 
                 Console.WriteLine("Selected index: " + index);
                 Console.WriteLine("Selected item: " + selectedFileName);
@@ -1058,13 +1005,13 @@ namespace WindowsFormsApp1
                     string voiceTag = Path.Combine(userVoicePath, $"{fileNameWithoutExtension}.wav");
 
                     Console.WriteLine("Playing voice tag: " + voiceTag);
-                 
+
                     try
                     {
                         // Check if the voice tag file exists
                         if (File.Exists(voiceTag))
-                        { 
-                                PlayMp3(voiceTag);
+                        {
+                            PlayMp3(voiceTag);
                         }
                         else
                         {
@@ -1086,7 +1033,7 @@ namespace WindowsFormsApp1
             {
                 Console.WriteLine("No item is selected");
             }
-                 
+
         }
 
 
@@ -1096,11 +1043,11 @@ namespace WindowsFormsApp1
 
             if (e.KeyCode == Keys.Delete)
             {
-                int index = listBox1.SelectedIndex;
+                int index = filesListBox.SelectedIndex;
 
                 if (index != -1) // Check if an item is selected
                 {
-                    string wordName = listBox1.SelectedItem.ToString();
+                    string wordName = filesListBox.SelectedItem.ToString();
 
                     // Ensure index is within valid range for allDocxFiles
                     if (index >= 0 && index < allDocxFiles.Count)
@@ -1115,7 +1062,6 @@ namespace WindowsFormsApp1
                         {
                             try
                             {
-                                                              
                                 // Delete the voice file
                                 File.Delete(voiceTag);
                                 MessageBox.Show($"Voice file deleted: {voiceTag}");
@@ -1173,7 +1119,7 @@ namespace WindowsFormsApp1
                             Console.WriteLine("Data list updated and saved.");
 
                             // Remove the item from the ListBox
-                            listBox1.Items.RemoveAt(index);
+                            filesListBox.Items.RemoveAt(index);
                         }
                         catch (Exception ex)
                         {
@@ -1192,38 +1138,30 @@ namespace WindowsFormsApp1
             }
 
 
-            if (e.KeyCode == Keys.Enter) { //open the file 
-                int index = listBox1.SelectedIndex;
+            if (e.KeyCode == Keys.Enter)
+            { //open the file 
+                int index = filesListBox.SelectedIndex;
 
                 if (!string.IsNullOrEmpty(MainrichTextBox.Text))
                 {
-                    
                     DialogResult result = MessageBox.Show("Are you sure you want to discard the changes?", "Alert", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                    if (result == DialogResult.Yes)
+                    if (result == DialogResult.No)
                     {
-                        // Execute the logic for discarding changes
-                        // (e.g., clear the TextBox, reset the form, etc.)
-                    }
-                    else
-                    {
-
-                        this.saveBtn.Click -= saveBtn_Click;
-                        this.saveBtn.Click += saveBtn_Click;
+                        saveingFunc();
+                        return;
                     }
                 }
-
-
                 if (index != ListBox.NoMatches)// Check if an item is clicked
                 {
                     Console.WriteLine(index);
-                    wordName = listBox1.SelectedItem.ToString();
-                    
+                    wordName = filesListBox.SelectedItem.ToString();
+
                     if (index >= 0 && index < allDocxFiles.Count)
                     {
                         wordName.Replace(".docx", "");
                         string addressToOpen = Path.Combine(wordPath, wordName);
                         var wordApp = new Microsoft.Office.Interop.Word.Application();
-                        Document doc = wordApp.Documents.Open(addressToOpen, ReadOnly: false, Visible: false);
+                        Word.Document doc = wordApp.Documents.Open(addressToOpen, ReadOnly: false, Visible: false);
                         doc.Range().Copy(); // Standard copy preserves editable RTF
 
                         // Get data from clipboard as RTF
@@ -1257,7 +1195,7 @@ namespace WindowsFormsApp1
                     if (drive.DriveType == DriveType.Removable && drive.IsReady)
                     {
                         removableDriveFound = true;
-                        int index = listBox1.SelectedIndex;
+                        int index = filesListBox.SelectedIndex;
 
                         if (index >= 0 && index < nameList.Count)
                         {
@@ -1290,14 +1228,14 @@ namespace WindowsFormsApp1
             }
             // Detect external storage drives
 
-            if(e.KeyCode == Keys.Back)
+            if (e.KeyCode == Keys.Back)
             {
                 MessageBox.Show("enter the new name of the file");
                 textBox2.Enabled = true;
                 textBox2.Focus();
                 this.textBox2.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.textBox_keyDown_Rename);
                 this.textBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_keyDown_Rename);
-                
+
             }
 
         }
@@ -1309,10 +1247,10 @@ namespace WindowsFormsApp1
             {
                 return;
             }
-            if(e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter)
             {
-                string wordname = listBox1.SelectedItem.ToString();
-                
+                string wordname = filesListBox.SelectedItem.ToString();
+
                 string oldWordFile = Path.Combine(wordPath, wordname);
                 string newWordFile = Path.Combine(wordPath, $"{textBox2.Text}.docx");
 
@@ -1333,9 +1271,9 @@ namespace WindowsFormsApp1
                 {
                     MessageBox.Show($"error while renameing the files: {ex.Message}");
                 }
-                
+
             }
-      
+
 
         }
         private string openWordDocument(string filePath)
@@ -1363,7 +1301,7 @@ namespace WindowsFormsApp1
             return textBoxContent;
         }
 
-        
+
 
         private void BeepTimer_Tick(object sender, EventArgs e)
         {
@@ -1378,20 +1316,20 @@ namespace WindowsFormsApp1
                 // Stop the alarm
                 beepTimer.Stop();
                 isAlarmActive = false;
-                
-                listBox1.Items.Clear();
+
+                filesListBox.Items.Clear();
             }
             else
             {
                 // Start the alarm
                 beepTimer.Start();
                 isAlarmActive = true;
-                this.listBox1.SelectedIndexChanged += new EventHandler(this.ListBox1_SelectedIndexChanged);
-                listBox1.Items.Clear();
+                this.filesListBox.SelectedIndexChanged += new EventHandler(this.ListBox1_SelectedIndexChanged);
+                filesListBox.Items.Clear();
                 PopulateListBoxOpen();
-                listBox1.Focus();
+                filesListBox.Focus();
             }
-            
+
             DialogResult result = MessageBox.Show("do you want to use random accsess or regular access", "info");
 
             ToggleButtonVisibilityFileManage();
@@ -1399,7 +1337,7 @@ namespace WindowsFormsApp1
         }
 
 
-       
+
         private void ToggleButtonVisibilityFileManage()
         {
             this.gotoBtn.Visible = !this.gotoBtn.Visible;
@@ -1411,7 +1349,7 @@ namespace WindowsFormsApp1
 
         private void ManageFiles()
         {
-            
+
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_keyPress);
             this.KeyPress -= new System.Windows.Forms.KeyPressEventHandler(this.Form1_keyPress);
         }
@@ -1437,7 +1375,7 @@ namespace WindowsFormsApp1
         private void saveAsBtn_Click(object sender, EventArgs e)
         {
             MessageBox.Show("clicked");
-            listBox1.Focus();// Focus on the list box
+            filesListBox.Focus();// Focus on the list box
 
 
             textBox2.Enabled = true;
@@ -1449,6 +1387,7 @@ namespace WindowsFormsApp1
 
         private async void textBox2_KeyDown(object sender, KeyEventArgs e)
         {
+            string saveVoicePath;
             if (e.KeyCode == Keys.Enter && textBox2.Text != null)
             {
                 DateTime currentDateTime = DateTime.Now;
@@ -1456,28 +1395,19 @@ namespace WindowsFormsApp1
 
                 wordName = textBox2.Text;
 
-                
+
                 textBox2.Enabled = false;
-                // MessageBox.Show("Press a key", "Press key", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // MessageBox.Show("Press a key", "Press key", MessageBoxButtons.OK, MessageBoxIcon.Information);     
+                saveVoicePath = Path.Combine(userVoicePath, $"{wordName}.wav");
 
-
-
-
-                
-
-                
-
-                
                 // Attach new handlers
                 this.KeyDown += new KeyEventHandler(Form1_keyDown);
-                
 
-                outputFilePath = Path.Combine(userVoicePath, $"{wordName}.wav");
                 this.KeyUp += new KeyEventHandler(Form1_keyUp);
 
                 this.Enabled = true;
                 await WaitForKeyPressAsync();
-                 
+
 
                 if (string.IsNullOrEmpty(pressedChar) || !char.IsLetterOrDigit(pressedChar[0]))
                 {
@@ -1551,7 +1481,7 @@ namespace WindowsFormsApp1
             }
         }
 
-        
+
         private void fontGroupBtn_Click(object sender, EventArgs e)
         {
             if (isAlarmActive)
@@ -1560,7 +1490,7 @@ namespace WindowsFormsApp1
                 beepTimer.Stop();
                 isAlarmActive = false;
                 removeItemsListBox();
-                listBox1.Items.Clear();
+                filesListBox.Items.Clear();
             }
             else
             {
@@ -1568,7 +1498,7 @@ namespace WindowsFormsApp1
                 beepTimer.Start();
                 isAlarmActive = true;
 
-               
+
             }
 
             insertBtn.Visible = !insertBtn.Visible;
@@ -1581,17 +1511,17 @@ namespace WindowsFormsApp1
             BIUbtn.Visible = !BIUbtn.Visible;
             PBObtn.Visible = !PBObtn.Visible;
             statusBtn.Visible = !statusBtn.Visible;
-            
+
         }
-        
+
         private void removeItemsListBox()
         {
-            
-            for(int i = 0; i <= listBox1.Items.Count - 1; i++)
+
+            for (int i = 0; i <= filesListBox.Items.Count - 1; i++)
             {
-                listBox1.Items.Remove(i);
+                filesListBox.Items.Remove(i);
             }
-            
+
         }
 
 
@@ -1603,9 +1533,9 @@ namespace WindowsFormsApp1
             this.KeyPress += new KeyPressEventHandler(this.Form1_keyPress_color);
         }
 
-        private void Form1_keyPress_color(object sender , KeyPressEventArgs e)
+        private void Form1_keyPress_color(object sender, KeyPressEventArgs e)
         {
-            
+
             string getColor = e.KeyChar.ToString().ToUpper();
             switch (getColor)
             {
@@ -1655,7 +1585,7 @@ namespace WindowsFormsApp1
             this.KeyPress += new KeyPressEventHandler(this.Form1_keyPress_style);
         }
 
-        private void Form1_keyPress_style(object sender , KeyPressEventArgs e)
+        private void Form1_keyPress_style(object sender, KeyPressEventArgs e)
         {
             string getStyle = e.KeyChar.ToString().ToUpper();
             switch (getStyle)
@@ -1701,7 +1631,7 @@ namespace WindowsFormsApp1
         private void PopulateFontComboBox()
         {
             fontComboBox.Items.Clear();
-            
+
             foreach (string fontName in fontNames)
             {
                 // Optional: verify that the font is installed
@@ -1804,7 +1734,7 @@ namespace WindowsFormsApp1
             }
         }
 
-       
+
         private void ComboBox_KeyPress(object sender, KeyPressEventArgs e)
         {
             // Suppress keypresses for alphanumeric keys
@@ -1821,33 +1751,33 @@ namespace WindowsFormsApp1
 
         private void endsentBtn_Click(object sender, EventArgs e)
         {
-                // Get the current cursor position
-                int cursorPosition = MainrichTextBox.SelectionStart;
+            // Get the current cursor position
+            int cursorPosition = MainrichTextBox.SelectionStart;
 
-                // Find the position of the next period after the cursor
-                int endOfSentence = MainrichTextBox.Text.IndexOf('.', cursorPosition);
+            // Find the position of the next period after the cursor
+            int endOfSentence = MainrichTextBox.Text.IndexOf('.', cursorPosition);
 
-                // If a period is found
-                if (endOfSentence != -1)
-                {
+            // If a period is found
+            if (endOfSentence != -1)
+            {
                 // Move to the character after the period (accounting for the period and space)
                 MainrichTextBox.SelectionStart = endOfSentence + 1;
 
-                    // If there is a space after the period, move the cursor after the space
-                    if (endOfSentence + 1 < MainrichTextBox.Text.Length && MainrichTextBox.Text[endOfSentence + 1] == ' ')
-                    {
-                    MainrichTextBox.SelectionStart++;
-                    }
-                }
-                else
+                // If there is a space after the period, move the cursor after the space
+                if (endOfSentence + 1 < MainrichTextBox.Text.Length && MainrichTextBox.Text[endOfSentence + 1] == ' ')
                 {
+                    MainrichTextBox.SelectionStart++;
+                }
+            }
+            else
+            {
                 // If no period is found, move to the end of the text
                 MainrichTextBox.SelectionStart = MainrichTextBox.Text.Length;
-                }
+            }
 
             // Ensure the TextBox has focus so the cursor is visible
             MainrichTextBox.Focus();
-            
+
         }
 
         private void settingBtn_Click(object sender, EventArgs e)
@@ -1895,7 +1825,7 @@ namespace WindowsFormsApp1
         private void button1_Click(object sender, EventArgs e)
         {
             var wordApp = new Microsoft.Office.Interop.Word.Application();
-            Document doc = wordApp.Documents.Open(@"C:\Users\Artin\Desktop\New Microsoft Word Document (6).docx", ReadOnly: false, Visible: false);
+            Word.Document doc = wordApp.Documents.Open(@"C:\Users\Artin\Desktop\New Microsoft Word Document (6).docx", ReadOnly: false, Visible: false);
 
             // Select all content in Word document
             doc.Range().Copy(); // Standard copy preserves editable RTF
@@ -1916,27 +1846,27 @@ namespace WindowsFormsApp1
         private void ExportPagesToWord(List<string> pages)
         {
 
-                var wordApp = new Word.Application();
-                wordApp.Visible = false;
-                var doc = wordApp.Documents.Add();
+            var wordApp = new Word.Application();
+            wordApp.Visible = false;
+            var doc = wordApp.Documents.Add();
 
-                string[] sections = MainrichTextBox.Text.Split(new string[] { "[PAGE_BREAK]" }, StringSplitOptions.None);
+            string[] sections = MainrichTextBox.Text.Split(new string[] { "[PAGE_BREAK]" }, StringSplitOptions.None);
 
-                foreach (string section in sections)
+            foreach (string section in sections)
+            {
+                Word.Paragraph para = doc.Content.Paragraphs.Add();
+                para.Range.Text = section.Trim();
+
+                if (section != sections.Last())
                 {
-                    Word.Paragraph para = doc.Content.Paragraphs.Add();
-                    para.Range.Text = section.Trim();
-
-                    if (section != sections.Last())
-                    {
-                        para.Range.InsertBreak(Word.WdBreakType.wdPageBreak);
-                    }
+                    para.Range.InsertBreak(Word.WdBreakType.wdPageBreak);
                 }
+            }
 
-                doc.SaveAs2(@"C:\Users\Artin\Desktop\MyDocumentWithPageBreaks.docx");
-                doc.Close();
-                wordApp.Quit();
-       
+            doc.SaveAs2(@"C:\Users\Artin\Desktop\MyDocumentWithPageBreaks.docx");
+            doc.Close();
+            wordApp.Quit();
+
 
         }
 
@@ -1980,7 +1910,182 @@ namespace WindowsFormsApp1
             MainrichTextBox.Text = MainrichTextBox.Text.Insert(pos, "[PAGE_BREAK]\n");
         }
 
+        private void ConvertToPdf(string wordPath, string pdfPath)
+        {
+            try
+            {
 
+                Spire.Doc.Document document = new Spire.Doc.Document();
+
+                document.LoadFromFile(wordPath);
+                document.SaveToFile(pdfPath, FileFormat.PDF);
+                MessageBox.Show("PDF saved successfully!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        private void savePdfBtn_Click(object sender, EventArgs e)
+        {
+
+            if (string.IsNullOrWhiteSpace(wordName))
+            {
+                MessageBox.Show("No Word file found yet. Save something first.");
+                return;
+            }
+
+
+
+            //when opened it doesnt show the word in the textbox2 
+            //this should work by that and bring the pdf name from it 
+            //i should make pdf folder and save them there 
+            //im fucked up
+            //fucking bookmarks ...
+
+            try
+            {
+                string docxPath = Path.Combine(userVoicePath, $"{wordName}.docx");
+                string pdfPath = Path.Combine(userVoicePath, $"{wordName}.pdf");
+
+                if (!File.Exists(docxPath))
+                {
+                    MessageBox.Show("Word file not found. Make sure it's saved first.");
+                    return;
+                }
+
+                Spire.Doc.Document document = new Spire.Doc.Document();
+                document.LoadFromFile(docxPath);
+                document.SaveToFile(pdfPath, Spire.Doc.FileFormat.PDF);
+
+                MessageBox.Show($"💾 PDF saved successfully:\n{pdfPath}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"💥 PDF export failed: {ex.Message}");
+            }
+
+        }
+
+        private void bMarkList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            // Get the selected index
+            int index = bMarkList.SelectedIndex;
+
+            // Check if an item is selected
+            if (index != -1)
+            {
+                string selectedFileName = bMarkList.SelectedItem.ToString();
+
+                Console.WriteLine("Selected index: " + index);
+                Console.WriteLine("Selected item: " + selectedFileName);
+
+                // Check if the index is within the range of voiceTagList
+                if (index >= 0 && index < voiceTagList.Count)
+                {
+                    // Replace ".docx" with an empty string in the file name
+                    //string fileNameWithoutExtension = selectedFileName.Replace(".docx", "");
+
+                    string voiceTag = Path.Combine(userVoicePath, $"{selectedFileName}.wav");
+
+                    Console.WriteLine("Playing voice tag: " + voiceTag);
+
+                    try
+                    {
+                        // Check if the voice tag file exists
+                        if (File.Exists(voiceTag))
+                        {
+                            PlayMp3(voiceTag);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Voice file doesn't exist", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    catch
+                    {
+                        MessageBox.Show("voice doesnt exist");
+                    }
+
+                }
+                else
+                {
+                    Console.WriteLine("Index out of range for voiceTagList");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No item is selected");
+            }
+
+        }
+
+
+
+        public void bMarkList_KeyDown(object sender, KeyEventArgs e)
+        {
+            string selectedItem = bMarkList.SelectedItem.ToString();
+            string bookmarkText = $"{selectedItem}ˑ";
+
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (bMarkList.SelectedIndex < 0)
+                    return;
+
+                int bookmarkIndex = MainrichTextBox.Text.IndexOf(bookmarkText);
+                if (bookmarkIndex > 0)
+                {
+                    MainrichTextBox.Focus(); // Focus the text box
+                    MainrichTextBox.Select(bookmarkIndex, 0); // Move cursor to bookmark
+                    MainrichTextBox.ScrollToCaret(); // Scroll to it
+                }
+                else
+                {
+                    MessageBox.Show("Bookmark not found in text.");
+                }
+            }
+
+            else if (e.KeyCode == Keys.Delete)
+            {
+                if (bMarkList.SelectedIndex < 0)
+                    return;
+
+                int bookmarkIndex = MainrichTextBox.Text.IndexOf(bookmarkText);
+                if (bookmarkIndex >= 0)
+                {
+                    MainrichTextBox.Text = MainrichTextBox.Text.Remove(bookmarkIndex, bookmarkText.Length);
+                }
+
+                // Remove from ListBox
+                bMarkList.Items.RemoveAt(bMarkList.SelectedIndex);
+
+                string bMarkTag = Path.Combine(userVoicePath, $"{bookmarkText}.wav");
+
+
+                // Try to delete the voice file
+                if (File.Exists(bMarkTag))
+                {
+                    try
+                    {
+                        // Delete the voice file
+                        File.Delete(bMarkTag);
+                        MessageBox.Show($"Voice file deleted: {bMarkTag}");
+                    }
+                    catch (IOException ex)
+                    {
+                        MessageBox.Show($"Error: The file is in use and cannot be deleted. Please close any program that might be using it.\nDetails: {ex.Message}");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error deleting voice file: {ex.Message}");
+                    }
+                }
+
+            }   
+
+        }
     }
 }
 
