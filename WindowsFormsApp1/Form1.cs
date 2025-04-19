@@ -4,19 +4,13 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Word =  Microsoft.Office.Interop.Word;
 using Spire.Doc;
-
+using Xceed.Words.NET;
 using NAudio.Wave;
 
 using System.Linq;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Printing;
-using System.Drawing.Text;
-
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Diagnostics;
-using System.Threading;
 using System.Media;
 using Timer = System.Windows.Forms.Timer;
 using Microsoft.Office.Interop.Word;
@@ -47,7 +41,7 @@ namespace WindowsFormsApp1
         int projecktNummber;
 
         //string DocumentsPath;
-        static int newVoice = 0;
+        //static int newVoice = 0;
         //static int newFile = 0;
         private WaveInEvent waveIn;
         private WaveFileWriter writer;
@@ -79,7 +73,7 @@ namespace WindowsFormsApp1
 
         private Dictionary<char, string> soundMappings;
 
-        // opening save the style in the word 
+        //opening save the style in the word 
         //paging 
         //inset add break page 
         //
@@ -616,7 +610,7 @@ namespace WindowsFormsApp1
         }
 
 
-        private void Recording(string path)
+        private void Recording()
         {
             try
             {
@@ -626,7 +620,7 @@ namespace WindowsFormsApp1
                 waveIn.RecordingStopped += onRecordingStopped;
                 //string lastAdded = alphaList[alphaList.Count - 1];
                 
-                writer = new WaveFileWriter(path, waveIn.WaveFormat);
+                writer = new WaveFileWriter(outputFilePath, waveIn.WaveFormat);
 
                 waveIn.StartRecording();
 
@@ -676,7 +670,7 @@ namespace WindowsFormsApp1
             }
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void bMarkBtn_Click(object sender, EventArgs e)
         {
             string bookChar = "ˑ";
             int textPlace = MainrichTextBox.SelectionStart;
@@ -704,7 +698,7 @@ namespace WindowsFormsApp1
             {
                 if (e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
                 {
-                    voice = Path.Combine(userVoicePath, $"{ e.KeyCode.ToString()}.wav");
+                    outputFilePath = Path.Combine(userVoicePath, $"{ e.KeyCode.ToString()}.wav");
                     HandleAlphabetKeyDown(e.KeyCode);
                 }
                 else
@@ -722,7 +716,7 @@ namespace WindowsFormsApp1
                 isWaitingForKey = false; // <--- Exit waiting mode after key
                 MainrichTextBox.ReadOnly = true;
 
-                Recording(path);
+                Recording();
 
                 await WaitForKeyPressAsync(); // wait until key up
 
@@ -904,8 +898,7 @@ namespace WindowsFormsApp1
             {
                 pressedChar = e.KeyCode.ToString();
                 Console.WriteLine("keydown" + pressedChar);
-                HandleAlphabetKeyDown(e.KeyCode, outputFilePath);
-
+                HandleAlphabetKeyDown(e.KeyCode);
             }
             else
             {
@@ -924,7 +917,7 @@ namespace WindowsFormsApp1
                 keyPressTcs.TrySetResult(true);
                 stopRecording();
                 isRecording = false;
-                double voiceTime = GetAudioDuration(voiceOutFilePath);
+                double voiceTime = GetAudioDuration(outputFilePath);
                 if (voiceTime < 1)
                 {
                     MessageBox.Show("too short voice");
@@ -1377,7 +1370,6 @@ namespace WindowsFormsApp1
             MessageBox.Show("clicked");
             filesListBox.Focus();// Focus on the list box
 
-
             textBox2.Enabled = true;
             textBox2.Focus();
 
@@ -1386,8 +1378,7 @@ namespace WindowsFormsApp1
         }
 
         private async void textBox2_KeyDown(object sender, KeyEventArgs e)
-        {
-            string saveVoicePath;
+        {            
             if (e.KeyCode == Keys.Enter && textBox2.Text != null)
             {
                 DateTime currentDateTime = DateTime.Now;
@@ -1395,10 +1386,12 @@ namespace WindowsFormsApp1
 
                 wordName = textBox2.Text;
 
-
+                //save the word 
+                saveWord();
+                //
                 textBox2.Enabled = false;
-                // MessageBox.Show("Press a key", "Press key", MessageBoxButtons.OK, MessageBoxIcon.Information);     
-                saveVoicePath = Path.Combine(userVoicePath, $"{wordName}.wav");
+
+                outputFilePath = Path.Combine(userVoicePath, $"{wordName}.wav");
 
                 // Attach new handlers
                 this.KeyDown += new KeyEventHandler(Form1_keyDown);
@@ -1407,7 +1400,6 @@ namespace WindowsFormsApp1
 
                 this.Enabled = true;
                 await WaitForKeyPressAsync();
-
 
                 if (string.IsNullOrEmpty(pressedChar) || !char.IsLetterOrDigit(pressedChar[0]))
                 {
@@ -1447,19 +1439,13 @@ namespace WindowsFormsApp1
                 }
                 Console.WriteLine("Before saving char: " + pressedChar);
 
-
-
                 // Write data to file with appended pressedChar
                 try
                 {
                     using (StreamWriter writer = new StreamWriter(filePathData, true))
                     {
                         writer.WriteLine($"{pressedChar}|{wordName}.docx|{outputFilePath}|{dateTimeString}");
-                    }
-
-                    // Re-enable the form
-
-
+                    }               
                 }
                 catch (Exception ex)
                 {
@@ -1472,13 +1458,50 @@ namespace WindowsFormsApp1
                     this.KeyUp -= new KeyEventHandler(Form1_keyUp);
                     pressedChar = string.Empty;
 
-
                     textBox2.Text = wordName;
                     this.textBox2.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
 
                 }
-
             }
+        }
+
+        public void saveWord()
+        {
+            string filePath = Path.Combine(wordPath, wordName);
+
+            try
+            {
+                // Create Word app
+                var wordApp = new Microsoft.Office.Interop.Word.Application();
+                var document = wordApp.Documents.Add();
+
+                // Make sure it's not visible
+                wordApp.Visible = false;
+
+                // Select the whole content
+                MainrichTextBox.SelectAll();
+
+                // Copy RTF content to clipboard
+                Clipboard.SetText(MainrichTextBox.Rtf, TextDataFormat.Rtf);
+
+                // Paste into Word
+                var range = document.Range(0, 0);
+                range.Paste();
+
+                // Save the document
+                document.SaveAs2(filePath, WdSaveFormat.wdFormatDocumentDefault);
+
+                // Cleanup
+                document.Close(false);
+                wordApp.Quit();
+
+                MessageBox.Show("Saved to Word successfully!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving to Word: " + ex.Message);
+            }
+
         }
 
 
@@ -1508,24 +1531,19 @@ namespace WindowsFormsApp1
             fontComboBox.Visible = !fontComboBox.Visible;
             fontSizeComboBox.Visible = !fontSizeComboBox.Visible;
             changeColor.Visible = !changeColor.Visible;
-            BIUbtn.Visible = !BIUbtn.Visible;
-            PBObtn.Visible = !PBObtn.Visible;
+            BIUbtn.Visible = !BIUbtn.Visible;            
             statusBtn.Visible = !statusBtn.Visible;
-
         }
+
+
 
         private void removeItemsListBox()
         {
-
             for (int i = 0; i <= filesListBox.Items.Count - 1; i++)
             {
                 filesListBox.Items.Remove(i);
             }
-
         }
-
-
-
 
         private void changeColor_Click(object sender, EventArgs e)
         {
@@ -1535,7 +1553,6 @@ namespace WindowsFormsApp1
 
         private void Form1_keyPress_color(object sender, KeyPressEventArgs e)
         {
-
             string getColor = e.KeyChar.ToString().ToUpper();
             switch (getColor)
             {
@@ -1714,7 +1731,7 @@ namespace WindowsFormsApp1
         }
 
 
-        private void saveFontFile(string selectedFont)
+        private void saveFontFile(string selectedFont)  //idk what is this ***
         {
             try
             {
@@ -1899,11 +1916,6 @@ namespace WindowsFormsApp1
             MessageBox.Show("Exported to Word successfully!");
         }
 
-        private void spacingValue_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnInsertPageBreak_Click(object sender, EventArgs e)
         {
             int pos = MainrichTextBox.SelectionStart;
@@ -1914,7 +1926,6 @@ namespace WindowsFormsApp1
         {
             try
             {
-
                 Spire.Doc.Document document = new Spire.Doc.Document();
 
                 document.LoadFromFile(wordPath);

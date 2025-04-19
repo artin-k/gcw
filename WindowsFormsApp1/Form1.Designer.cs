@@ -58,7 +58,6 @@ namespace WindowsFormsApp1
             this.statusBtn = new System.Windows.Forms.Button();
             this.fileManagment = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.PBObtn = new System.Windows.Forms.Button();
             this.changeColor = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.BIUbtn = new System.Windows.Forms.Button();
@@ -87,7 +86,7 @@ namespace WindowsFormsApp1
             this.saveBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.saveBtn.ImageAlign = System.Drawing.ContentAlignment.TopRight;
             this.saveBtn.Location = new System.Drawing.Point(146, 0);
-            this.saveBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.saveBtn.Margin = new System.Windows.Forms.Padding(2);
             this.saveBtn.Name = "saveBtn";
             this.saveBtn.Size = new System.Drawing.Size(75, 41);
             this.saveBtn.TabIndex = 1;
@@ -99,7 +98,7 @@ namespace WindowsFormsApp1
             // 
             this.searchBtn.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.searchBtn.Location = new System.Drawing.Point(132, 46);
-            this.searchBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.searchBtn.Margin = new System.Windows.Forms.Padding(2);
             this.searchBtn.Name = "searchBtn";
             this.searchBtn.Size = new System.Drawing.Size(76, 46);
             this.searchBtn.TabIndex = 2;
@@ -109,7 +108,7 @@ namespace WindowsFormsApp1
             // startparBtn
             // 
             this.startparBtn.Location = new System.Drawing.Point(172, 6);
-            this.startparBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.startparBtn.Margin = new System.Windows.Forms.Padding(2);
             this.startparBtn.Name = "startparBtn";
             this.startparBtn.Size = new System.Drawing.Size(55, 72);
             this.startparBtn.TabIndex = 3;
@@ -121,7 +120,7 @@ namespace WindowsFormsApp1
             // button4
             // 
             this.button4.Location = new System.Drawing.Point(170, 82);
-            this.button4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button4.Margin = new System.Windows.Forms.Padding(2);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(56, 47);
             this.button4.TabIndex = 4;
@@ -131,7 +130,7 @@ namespace WindowsFormsApp1
             // endparBtn
             // 
             this.endparBtn.Location = new System.Drawing.Point(76, 90);
-            this.endparBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.endparBtn.Margin = new System.Windows.Forms.Padding(2);
             this.endparBtn.Name = "endparBtn";
             this.endparBtn.Size = new System.Drawing.Size(73, 39);
             this.endparBtn.TabIndex = 5;
@@ -143,7 +142,7 @@ namespace WindowsFormsApp1
             // startsentBtn
             // 
             this.startsentBtn.Location = new System.Drawing.Point(101, 58);
-            this.startsentBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.startsentBtn.Margin = new System.Windows.Forms.Padding(2);
             this.startsentBtn.Name = "startsentBtn";
             this.startsentBtn.Size = new System.Drawing.Size(56, 32);
             this.startsentBtn.TabIndex = 6;
@@ -155,19 +154,19 @@ namespace WindowsFormsApp1
             // bookMarkBtn
             // 
             this.bookMarkBtn.Location = new System.Drawing.Point(71, 34);
-            this.bookMarkBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.bookMarkBtn.Margin = new System.Windows.Forms.Padding(2);
             this.bookMarkBtn.Name = "bookMarkBtn";
             this.bookMarkBtn.Size = new System.Drawing.Size(77, 45);
             this.bookMarkBtn.TabIndex = 7;
             this.bookMarkBtn.Text = "بوک مارک";
             this.bookMarkBtn.UseVisualStyleBackColor = true;
             this.bookMarkBtn.Visible = false;
-            this.bookMarkBtn.Click += new System.EventHandler(this.button7_Click);
+            this.bookMarkBtn.Click += new System.EventHandler(this.bMarkBtn_Click);
             // 
             // endsentBtn
             // 
             this.endsentBtn.Location = new System.Drawing.Point(4, 3);
-            this.endsentBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.endsentBtn.Margin = new System.Windows.Forms.Padding(2);
             this.endsentBtn.Name = "endsentBtn";
             this.endsentBtn.Size = new System.Drawing.Size(41, 54);
             this.endsentBtn.TabIndex = 8;
@@ -179,7 +178,7 @@ namespace WindowsFormsApp1
             // starttextBtn
             // 
             this.starttextBtn.Location = new System.Drawing.Point(-3, 52);
-            this.starttextBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.starttextBtn.Margin = new System.Windows.Forms.Padding(2);
             this.starttextBtn.Name = "starttextBtn";
             this.starttextBtn.Size = new System.Drawing.Size(51, 54);
             this.starttextBtn.TabIndex = 9;
@@ -190,7 +189,7 @@ namespace WindowsFormsApp1
             // exitBtn
             // 
             this.exitBtn.Location = new System.Drawing.Point(0, 2);
-            this.exitBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.exitBtn.Margin = new System.Windows.Forms.Padding(2);
             this.exitBtn.Name = "exitBtn";
             this.exitBtn.Size = new System.Drawing.Size(60, 53);
             this.exitBtn.TabIndex = 10;
@@ -201,7 +200,7 @@ namespace WindowsFormsApp1
             // endtextBtn
             // 
             this.endtextBtn.Location = new System.Drawing.Point(68, 4);
-            this.endtextBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.endtextBtn.Margin = new System.Windows.Forms.Padding(2);
             this.endtextBtn.Name = "endtextBtn";
             this.endtextBtn.Size = new System.Drawing.Size(74, 47);
             this.endtextBtn.TabIndex = 11;
@@ -212,7 +211,7 @@ namespace WindowsFormsApp1
             // gotoBtn
             // 
             this.gotoBtn.Location = new System.Drawing.Point(35, 0);
-            this.gotoBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gotoBtn.Margin = new System.Windows.Forms.Padding(2);
             this.gotoBtn.Name = "gotoBtn";
             this.gotoBtn.Size = new System.Drawing.Size(81, 41);
             this.gotoBtn.TabIndex = 12;
@@ -223,7 +222,7 @@ namespace WindowsFormsApp1
             // gotoBmark
             // 
             this.gotoBmark.Location = new System.Drawing.Point(113, 63);
-            this.gotoBmark.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gotoBmark.Margin = new System.Windows.Forms.Padding(2);
             this.gotoBmark.Name = "gotoBmark";
             this.gotoBmark.Size = new System.Drawing.Size(82, 46);
             this.gotoBmark.TabIndex = 13;
@@ -235,7 +234,7 @@ namespace WindowsFormsApp1
             // insertBtn
             // 
             this.insertBtn.Location = new System.Drawing.Point(76, 58);
-            this.insertBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.insertBtn.Margin = new System.Windows.Forms.Padding(2);
             this.insertBtn.Name = "insertBtn";
             this.insertBtn.Size = new System.Drawing.Size(45, 28);
             this.insertBtn.TabIndex = 17;
@@ -257,9 +256,9 @@ namespace WindowsFormsApp1
             this.groupBox1.Controls.Add(this.gotoBtn);
             this.groupBox1.Controls.Add(this.gotoBmark);
             this.groupBox1.Location = new System.Drawing.Point(970, 7);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox1.Size = new System.Drawing.Size(221, 135);
             this.groupBox1.TabIndex = 18;
             this.groupBox1.TabStop = false;
@@ -268,7 +267,7 @@ namespace WindowsFormsApp1
             // 
             this.fontSizeComboBox.FormattingEnabled = true;
             this.fontSizeComboBox.Location = new System.Drawing.Point(113, 97);
-            this.fontSizeComboBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.fontSizeComboBox.Margin = new System.Windows.Forms.Padding(2);
             this.fontSizeComboBox.Name = "fontSizeComboBox";
             this.fontSizeComboBox.Size = new System.Drawing.Size(81, 21);
             this.fontSizeComboBox.TabIndex = 26;
@@ -280,7 +279,7 @@ namespace WindowsFormsApp1
             this.fontComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.fontComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.fontComboBox.Location = new System.Drawing.Point(12, 70);
-            this.fontComboBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.fontComboBox.Margin = new System.Windows.Forms.Padding(2);
             this.fontComboBox.Name = "fontComboBox";
             this.fontComboBox.Size = new System.Drawing.Size(85, 21);
             this.fontComboBox.TabIndex = 0;
@@ -292,7 +291,7 @@ namespace WindowsFormsApp1
             // savePdfBtn
             // 
             this.savePdfBtn.Location = new System.Drawing.Point(76, 70);
-            this.savePdfBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.savePdfBtn.Margin = new System.Windows.Forms.Padding(2);
             this.savePdfBtn.Name = "savePdfBtn";
             this.savePdfBtn.Size = new System.Drawing.Size(73, 39);
             this.savePdfBtn.TabIndex = 7;
@@ -304,7 +303,7 @@ namespace WindowsFormsApp1
             // printBtn
             // 
             this.printBtn.Location = new System.Drawing.Point(14, 38);
-            this.printBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.printBtn.Margin = new System.Windows.Forms.Padding(2);
             this.printBtn.Name = "printBtn";
             this.printBtn.Size = new System.Drawing.Size(57, 37);
             this.printBtn.TabIndex = 6;
@@ -316,7 +315,7 @@ namespace WindowsFormsApp1
             // saveAsBtn
             // 
             this.saveAsBtn.Location = new System.Drawing.Point(64, 36);
-            this.saveAsBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.saveAsBtn.Margin = new System.Windows.Forms.Padding(2);
             this.saveAsBtn.Name = "saveAsBtn";
             this.saveAsBtn.Size = new System.Drawing.Size(57, 37);
             this.saveAsBtn.TabIndex = 26;
@@ -335,9 +334,9 @@ namespace WindowsFormsApp1
             this.groupBox2.Controls.Add(this.starttextBtn);
             this.groupBox2.Controls.Add(this.endtextBtn);
             this.groupBox2.Location = new System.Drawing.Point(9, 10);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox2.Size = new System.Drawing.Size(156, 167);
             this.groupBox2.TabIndex = 19;
             this.groupBox2.TabStop = false;
@@ -345,7 +344,7 @@ namespace WindowsFormsApp1
             // statusBtn
             // 
             this.statusBtn.Location = new System.Drawing.Point(-9, 105);
-            this.statusBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.statusBtn.Margin = new System.Windows.Forms.Padding(2);
             this.statusBtn.Name = "statusBtn";
             this.statusBtn.Size = new System.Drawing.Size(55, 45);
             this.statusBtn.TabIndex = 27;
@@ -357,7 +356,7 @@ namespace WindowsFormsApp1
             // fileManagment
             // 
             this.fileManagment.Location = new System.Drawing.Point(30, 87);
-            this.fileManagment.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.fileManagment.Margin = new System.Windows.Forms.Padding(2);
             this.fileManagment.Name = "fileManagment";
             this.fileManagment.Size = new System.Drawing.Size(52, 38);
             this.fileManagment.TabIndex = 7;
@@ -369,31 +368,22 @@ namespace WindowsFormsApp1
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox3.AutoSize = true;
-            this.groupBox3.Controls.Add(this.PBObtn);
             this.groupBox3.Controls.Add(this.changeColor);
             this.groupBox3.Controls.Add(this.endsentBtn);
             this.groupBox3.Controls.Add(this.startsentBtn);
             this.groupBox3.Controls.Add(this.insertBtn);
             this.groupBox3.Location = new System.Drawing.Point(9, 486);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox3.Size = new System.Drawing.Size(162, 108);
             this.groupBox3.TabIndex = 20;
             this.groupBox3.TabStop = false;
             // 
-            // PBObtn
-            // 
-            this.PBObtn.Location = new System.Drawing.Point(0, 0);
-            this.PBObtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.PBObtn.Name = "PBObtn";
-            this.PBObtn.Size = new System.Drawing.Size(56, 19);
-            this.PBObtn.TabIndex = 0;
-            // 
             // changeColor
             // 
             this.changeColor.Location = new System.Drawing.Point(98, 28);
-            this.changeColor.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.changeColor.Margin = new System.Windows.Forms.Padding(2);
             this.changeColor.Name = "changeColor";
             this.changeColor.Size = new System.Drawing.Size(55, 45);
             this.changeColor.TabIndex = 19;
@@ -412,9 +402,9 @@ namespace WindowsFormsApp1
             this.groupBox4.Controls.Add(this.endparBtn);
             this.groupBox4.Controls.Add(this.button4);
             this.groupBox4.Location = new System.Drawing.Point(969, 455);
-            this.groupBox4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox4.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox4.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox4.Size = new System.Drawing.Size(231, 146);
             this.groupBox4.TabIndex = 21;
             this.groupBox4.TabStop = false;
@@ -422,7 +412,7 @@ namespace WindowsFormsApp1
             // BIUbtn
             // 
             this.BIUbtn.Location = new System.Drawing.Point(50, 64);
-            this.BIUbtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.BIUbtn.Margin = new System.Windows.Forms.Padding(2);
             this.BIUbtn.Name = "BIUbtn";
             this.BIUbtn.Size = new System.Drawing.Size(67, 39);
             this.BIUbtn.TabIndex = 7;
@@ -434,7 +424,7 @@ namespace WindowsFormsApp1
             // fontGroupBtn
             // 
             this.fontGroupBtn.Location = new System.Drawing.Point(122, 20);
-            this.fontGroupBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.fontGroupBtn.Margin = new System.Windows.Forms.Padding(2);
             this.fontGroupBtn.Name = "fontGroupBtn";
             this.fontGroupBtn.Size = new System.Drawing.Size(55, 45);
             this.fontGroupBtn.TabIndex = 6;
@@ -446,7 +436,7 @@ namespace WindowsFormsApp1
             // 
             this.filesListBox.FormattingEnabled = true;
             this.filesListBox.Location = new System.Drawing.Point(855, 197);
-            this.filesListBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.filesListBox.Margin = new System.Windows.Forms.Padding(2);
             this.filesListBox.Name = "filesListBox";
             this.filesListBox.Size = new System.Drawing.Size(278, 121);
             this.filesListBox.TabIndex = 22;
@@ -467,7 +457,7 @@ namespace WindowsFormsApp1
             // 
             this.textBox2.Enabled = false;
             this.textBox2.Location = new System.Drawing.Point(184, 97);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(2);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(508, 28);
@@ -477,7 +467,7 @@ namespace WindowsFormsApp1
             // settingBtn
             // 
             this.settingBtn.Location = new System.Drawing.Point(56, 212);
-            this.settingBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.settingBtn.Margin = new System.Windows.Forms.Padding(2);
             this.settingBtn.Name = "settingBtn";
             this.settingBtn.Size = new System.Drawing.Size(55, 45);
             this.settingBtn.TabIndex = 28;
@@ -488,7 +478,7 @@ namespace WindowsFormsApp1
             // rtlBtn
             // 
             this.rtlBtn.Location = new System.Drawing.Point(215, 20);
-            this.rtlBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.rtlBtn.Margin = new System.Windows.Forms.Padding(2);
             this.rtlBtn.Name = "rtlBtn";
             this.rtlBtn.Size = new System.Drawing.Size(59, 45);
             this.rtlBtn.TabIndex = 29;
@@ -499,7 +489,7 @@ namespace WindowsFormsApp1
             // aligenmentBtn
             // 
             this.aligenmentBtn.Location = new System.Drawing.Point(335, 20);
-            this.aligenmentBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.aligenmentBtn.Margin = new System.Windows.Forms.Padding(2);
             this.aligenmentBtn.Name = "aligenmentBtn";
             this.aligenmentBtn.Size = new System.Drawing.Size(64, 45);
             this.aligenmentBtn.TabIndex = 30;
@@ -510,7 +500,7 @@ namespace WindowsFormsApp1
             // MainrichTextBox
             // 
             this.MainrichTextBox.Location = new System.Drawing.Point(215, 128);
-            this.MainrichTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MainrichTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.MainrichTextBox.Name = "MainrichTextBox";
             this.MainrichTextBox.Size = new System.Drawing.Size(463, 246);
             this.MainrichTextBox.TabIndex = 31;
@@ -523,7 +513,7 @@ namespace WindowsFormsApp1
             // btnSetSpacing
             // 
             this.btnSetSpacing.Location = new System.Drawing.Point(442, 20);
-            this.btnSetSpacing.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSetSpacing.Margin = new System.Windows.Forms.Padding(2);
             this.btnSetSpacing.Name = "btnSetSpacing";
             this.btnSetSpacing.Size = new System.Drawing.Size(64, 45);
             this.btnSetSpacing.TabIndex = 32;
@@ -534,17 +524,16 @@ namespace WindowsFormsApp1
             // spacingValue
             // 
             this.spacingValue.Location = new System.Drawing.Point(527, 53);
-            this.spacingValue.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.spacingValue.Margin = new System.Windows.Forms.Padding(2);
             this.spacingValue.Multiline = true;
             this.spacingValue.Name = "spacingValue";
             this.spacingValue.Size = new System.Drawing.Size(116, 28);
             this.spacingValue.TabIndex = 33;
-            this.spacingValue.TextChanged += new System.EventHandler(this.spacingValue_TextChanged);
             // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(711, 228);
-            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(77, 45);
             this.button1.TabIndex = 34;
@@ -555,7 +544,7 @@ namespace WindowsFormsApp1
             // exportBtn
             // 
             this.exportBtn.Location = new System.Drawing.Point(711, 167);
-            this.exportBtn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.exportBtn.Margin = new System.Windows.Forms.Padding(2);
             this.exportBtn.Name = "exportBtn";
             this.exportBtn.Size = new System.Drawing.Size(56, 47);
             this.exportBtn.TabIndex = 8;
@@ -566,7 +555,7 @@ namespace WindowsFormsApp1
             // btnInsertPageBreak
             // 
             this.btnInsertPageBreak.Location = new System.Drawing.Point(711, 278);
-            this.btnInsertPageBreak.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnInsertPageBreak.Margin = new System.Windows.Forms.Padding(2);
             this.btnInsertPageBreak.Name = "btnInsertPageBreak";
             this.btnInsertPageBreak.Size = new System.Drawing.Size(56, 47);
             this.btnInsertPageBreak.TabIndex = 35;
@@ -608,7 +597,7 @@ namespace WindowsFormsApp1
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.KeyPreview = true;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "gcw";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
@@ -653,7 +642,6 @@ namespace WindowsFormsApp1
         private System.Windows.Forms.Button saveAsBtn;
         private System.Windows.Forms.Button savePdfBtn;
         private System.Windows.Forms.Button statusBtn;
-        private System.Windows.Forms.Button PBObtn;
         private System.Windows.Forms.Button changeColor;
         private System.Windows.Forms.Button BIUbtn;
         private System.Windows.Forms.Button fontGroupBtn;
