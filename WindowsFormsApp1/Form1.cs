@@ -76,7 +76,8 @@ namespace WindowsFormsApp1
         //opening save the style in the word 
         //paging 
         //inset add break page 
-        //
+
+        //textbox2 curor moves left to right to read 
         public Form1()
         {
             this.KeyPreview = true;
@@ -84,7 +85,7 @@ namespace WindowsFormsApp1
 
             InitializeTimer();
             InitializeSoundMappings();
-            this.MainrichTextBox.PreviewKeyDown += new PreviewKeyDownEventHandler(textBox1_PreviewKeyDown);
+            
 
         }
 
@@ -476,16 +477,27 @@ namespace WindowsFormsApp1
             }
         }
 
+        public void title_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+
+            cursorMovingVoice(e.KeyCode, this.titleTextBox);
+        }
+
         private void textBox1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            int currentPosition = MainrichTextBox.SelectionStart;
+            cursorMovingVoice(e.KeyCode, this.MainrichTextBox);
+        }
 
-            if (e.KeyCode == Keys.Left && currentPosition > 0)
+        public void cursorMovingVoice(Keys key, TextBoxBase txt)
+        {
+            int currentPosition = txt.SelectionStart;
+
+            if (key == Keys.Left && currentPosition > 0)
             {
                 try
                 {
                     Console.WriteLine("flag left");
-                    char previousChar = MainrichTextBox.Text[currentPosition - 1];
+                    char previousChar = txt.Text[currentPosition - 1];
                     Console.WriteLine(previousChar);
                     if (soundMappings.ContainsKey(previousChar))
                     {
@@ -497,12 +509,12 @@ namespace WindowsFormsApp1
                     MessageBox.Show("An error occurred: " + ex.Message);
                 }
             }
-            else if (e.KeyCode == Keys.Right && currentPosition < MainrichTextBox.Text.Length + 1)
+            else if (key == Keys.Right && currentPosition < txt.Text.Length + 1)
             {
                 try
                 {
                     Console.WriteLine("flag right");
-                    char nextChar = MainrichTextBox.Text[currentPosition];
+                    char nextChar = txt.Text[currentPosition];
                     Console.WriteLine(nextChar);
                     if (soundMappings.ContainsKey(nextChar))
                     {
@@ -768,7 +780,7 @@ namespace WindowsFormsApp1
                             string addressToOpen = allDocxFiles[i];
                             PlayMp3(voiceTagList[i]);
                             MainrichTextBox.Text = openWordDocument(addressToOpen);
-                            textBox2.Text = nameList[i].Replace(".docx", "");
+                            titleTextBox.Text = nameList[i].Replace(".docx", "");
                             keyPressTcs.TrySetResult(true);
 
                             break; // Exit the loop since we found the key
@@ -940,16 +952,16 @@ namespace WindowsFormsApp1
         public void saveingFunc()
         {
             MessageBox.Show("Save button clicked!");
-            if (string.IsNullOrWhiteSpace(textBox2.Text))
+            if (string.IsNullOrWhiteSpace(titleTextBox.Text))
             {
                 DialogResult result = MessageBox.Show("The file is new. Do you want to save it?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (result == DialogResult.Yes)
                 {
-                    textBox2.Enabled = true;
-                    textBox2.Focus();
+                    titleTextBox.Enabled = true;
+                    titleTextBox.Focus();
 
-                    this.textBox2.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
-                    this.textBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
+                    this.titleTextBox.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
+                    this.titleTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
 
                 }
                 else
@@ -958,7 +970,7 @@ namespace WindowsFormsApp1
                 }
             }
 
-            string wordFileName = $"{textBox2.Text}.docx";
+            string wordFileName = $"{titleTextBox.Text}.docx";
         }
 
 
@@ -1168,7 +1180,7 @@ namespace WindowsFormsApp1
 
                         // Cleanup
                         doc.Close(false);
-                        textBox2.Text = wordName;
+                        titleTextBox.Text = wordName;
                     }
                     else
                     {
@@ -1224,10 +1236,10 @@ namespace WindowsFormsApp1
             if (e.KeyCode == Keys.Back)
             {
                 MessageBox.Show("enter the new name of the file");
-                textBox2.Enabled = true;
-                textBox2.Focus();
-                this.textBox2.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.textBox_keyDown_Rename);
-                this.textBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_keyDown_Rename);
+                titleTextBox.Enabled = true;
+                titleTextBox.Focus();
+                this.titleTextBox.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.textBox_keyDown_Rename);
+                this.titleTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_keyDown_Rename);
 
             }
 
@@ -1236,7 +1248,7 @@ namespace WindowsFormsApp1
 
         private void textBox_keyDown_Rename(object sender, KeyEventArgs e)
         {
-            if (string.IsNullOrEmpty(textBox2.Text))
+            if (string.IsNullOrEmpty(titleTextBox.Text))
             {
                 return;
             }
@@ -1245,11 +1257,11 @@ namespace WindowsFormsApp1
                 string wordname = filesListBox.SelectedItem.ToString();
 
                 string oldWordFile = Path.Combine(wordPath, wordname);
-                string newWordFile = Path.Combine(wordPath, $"{textBox2.Text}.docx");
+                string newWordFile = Path.Combine(wordPath, $"{titleTextBox.Text}.docx");
 
                 wordname = wordname.Replace(".docx", "");
                 string oldVoiceTag = Path.Combine(userVoicePath, $"{wordname}0.wav");
-                string newVoiceTag = Path.Combine(userVoicePath, "voices", $"{textBox2.Text}0.wav");
+                string newVoiceTag = Path.Combine(userVoicePath, "voices", $"{titleTextBox.Text}0.wav");
 
                 try
                 {
@@ -1257,8 +1269,8 @@ namespace WindowsFormsApp1
                     File.Move(oldVoiceTag, newVoiceTag);
                     MessageBox.Show("rename was seccesful");
 
-                    this.textBox2.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.textBox_keyDown_Rename);
-                    textBox2.Enabled = false;
+                    this.titleTextBox.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.textBox_keyDown_Rename);
+                    titleTextBox.Enabled = false;
                 }
                 catch (Exception ex)
                 {
@@ -1370,26 +1382,26 @@ namespace WindowsFormsApp1
             MessageBox.Show("clicked");
             filesListBox.Focus();// Focus on the list box
 
-            textBox2.Enabled = true;
-            textBox2.Focus();
+            titleTextBox.Enabled = true;
+            titleTextBox.Focus();
 
-            this.textBox2.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
-            this.textBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
+            this.titleTextBox.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
+            this.titleTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
         }
 
         private async void textBox2_KeyDown(object sender, KeyEventArgs e)
         {            
-            if (e.KeyCode == Keys.Enter && textBox2.Text != null)
+            if (e.KeyCode == Keys.Enter && titleTextBox.Text != null)
             {
                 DateTime currentDateTime = DateTime.Now;
                 string dateTimeString = currentDateTime.ToString("yyyy-MM-dd HH:mm:ss");
 
-                wordName = textBox2.Text;
+                wordName = titleTextBox.Text;
 
                 //save the word 
                 saveWord();
                 //
-                textBox2.Enabled = false;
+                titleTextBox.Enabled = false;
 
                 outputFilePath = Path.Combine(userVoicePath, $"{wordName}.wav");
 
@@ -1458,8 +1470,8 @@ namespace WindowsFormsApp1
                     this.KeyUp -= new KeyEventHandler(Form1_keyUp);
                     pressedChar = string.Empty;
 
-                    textBox2.Text = wordName;
-                    this.textBox2.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
+                    titleTextBox.Text = wordName;
+                    this.titleTextBox.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
 
                 }
             }
@@ -1946,10 +1958,7 @@ namespace WindowsFormsApp1
                 MessageBox.Show("No Word file found yet. Save something first.");
                 return;
             }
-
-
-
-            //when opened it doesnt show the word in the textbox2 
+            
             //this should work by that and bring the pdf name from it 
             //i should make pdf folder and save them there 
             //im fucked up
@@ -2096,6 +2105,35 @@ namespace WindowsFormsApp1
 
             }   
 
+        }
+
+        private void parGroup_Click(object sender, EventArgs e)
+        {
+            if (isAlarmActive)
+            {
+                // Stop the alarm
+                beepTimer.Stop();
+                isAlarmActive = false;
+            }
+            else
+            {
+                // Start the alarm
+                beepTimer.Start();
+                isAlarmActive = true;                                               
+            }
+
+            ToggleButtonVisibilityParagraph();
+        }
+
+
+
+        private void ToggleButtonVisibilityParagraph()
+        {
+            this.rtlBtn.Visible = !this.rtlBtn.Visible;
+            this.aligenmentBtn.Visible = !this.aligenmentBtn.Visible;
+            this.btnSetSpacing.Visible = !this.btnSetSpacing.Visible;
+            this.btnInsertPageBreak.Visible = !this.btnInsertPageBreak.Visible;
+            
         }
     }
 }
