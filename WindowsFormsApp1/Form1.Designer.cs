@@ -56,24 +56,25 @@ namespace WindowsFormsApp1
             this.saveAsBtn = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.statusBtn = new System.Windows.Forms.Button();
+            this.btnInsertPageBreak = new System.Windows.Forms.Button();
             this.fileManagment = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.changeColor = new System.Windows.Forms.Button();
+            this.btnSetSpacing = new System.Windows.Forms.Button();
+            this.aligenmentBtn = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.btnToggleLanguage = new System.Windows.Forms.Button();
             this.BIUbtn = new System.Windows.Forms.Button();
             this.fontGroupBtn = new System.Windows.Forms.Button();
+            this.rtlBtn = new System.Windows.Forms.Button();
             this.filesListBox = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.titleTextBox = new System.Windows.Forms.TextBox();
             this.settingBtn = new System.Windows.Forms.Button();
-            this.rtlBtn = new System.Windows.Forms.Button();
-            this.aligenmentBtn = new System.Windows.Forms.Button();
             this.MainrichTextBox = new System.Windows.Forms.RichTextBox();
-            this.btnSetSpacing = new System.Windows.Forms.Button();
             this.spacingValue = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.exportBtn = new System.Windows.Forms.Button();
-            this.btnInsertPageBreak = new System.Windows.Forms.Button();
             this.bMarkList = new System.Windows.Forms.ListBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -107,7 +108,7 @@ namespace WindowsFormsApp1
             // 
             // startparBtn
             // 
-            this.startparBtn.Location = new System.Drawing.Point(229, 7);
+            this.startparBtn.Location = new System.Drawing.Point(258, 25);
             this.startparBtn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.startparBtn.Name = "startparBtn";
             this.startparBtn.Size = new System.Drawing.Size(73, 89);
@@ -119,7 +120,7 @@ namespace WindowsFormsApp1
             // 
             // parGroup
             // 
-            this.parGroup.Location = new System.Drawing.Point(161, 101);
+            this.parGroup.Location = new System.Drawing.Point(199, 25);
             this.parGroup.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.parGroup.Name = "parGroup";
             this.parGroup.Size = new System.Drawing.Size(140, 58);
@@ -211,7 +212,7 @@ namespace WindowsFormsApp1
             // 
             // gotoBtn
             // 
-            this.gotoBtn.Location = new System.Drawing.Point(80, 18);
+            this.gotoBtn.Location = new System.Drawing.Point(1401, 21);
             this.gotoBtn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gotoBtn.Name = "gotoBtn";
             this.gotoBtn.Size = new System.Drawing.Size(108, 50);
@@ -254,7 +255,6 @@ namespace WindowsFormsApp1
             this.groupBox1.Controls.Add(this.saveBtn);
             this.groupBox1.Controls.Add(this.searchBtn);
             this.groupBox1.Controls.Add(this.bookMarkBtn);
-            this.groupBox1.Controls.Add(this.gotoBtn);
             this.groupBox1.Controls.Add(this.gotoBmark);
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(1567, 9);
@@ -357,6 +357,19 @@ namespace WindowsFormsApp1
             this.statusBtn.Visible = false;
             this.statusBtn.Click += new System.EventHandler(this.statusBtn_Click);
             // 
+            // btnInsertPageBreak
+            // 
+            this.btnInsertPageBreak.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnInsertPageBreak.Location = new System.Drawing.Point(76, 54);
+            this.btnInsertPageBreak.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnInsertPageBreak.Name = "btnInsertPageBreak";
+            this.btnInsertPageBreak.Size = new System.Drawing.Size(171, 68);
+            this.btnInsertPageBreak.TabIndex = 35;
+            this.btnInsertPageBreak.Text = "break page";
+            this.btnInsertPageBreak.UseVisualStyleBackColor = true;
+            this.btnInsertPageBreak.Visible = false;
+            this.btnInsertPageBreak.Click += new System.EventHandler(this.btnInsertPageBreak_Click);
+            // 
             // fileManagment
             // 
             this.fileManagment.Location = new System.Drawing.Point(76, 205);
@@ -399,10 +412,37 @@ namespace WindowsFormsApp1
             this.changeColor.Visible = false;
             this.changeColor.Click += new System.EventHandler(this.changeColor_Click);
             // 
+            // btnSetSpacing
+            // 
+            this.btnSetSpacing.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSetSpacing.Location = new System.Drawing.Point(91, 118);
+            this.btnSetSpacing.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSetSpacing.Name = "btnSetSpacing";
+            this.btnSetSpacing.Size = new System.Drawing.Size(156, 55);
+            this.btnSetSpacing.TabIndex = 32;
+            this.btnSetSpacing.Text = "Set Spacing";
+            this.btnSetSpacing.UseVisualStyleBackColor = true;
+            this.btnSetSpacing.Visible = false;
+            this.btnSetSpacing.Click += new System.EventHandler(this.btnSetSpacing_Click);
+            // 
+            // aligenmentBtn
+            // 
+            this.aligenmentBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.aligenmentBtn.Location = new System.Drawing.Point(0, 43);
+            this.aligenmentBtn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.aligenmentBtn.Name = "aligenmentBtn";
+            this.aligenmentBtn.Size = new System.Drawing.Size(146, 55);
+            this.aligenmentBtn.TabIndex = 30;
+            this.aligenmentBtn.Text = "aligenment";
+            this.aligenmentBtn.UseVisualStyleBackColor = true;
+            this.aligenmentBtn.Visible = false;
+            this.aligenmentBtn.Click += new System.EventHandler(this.aligenmentBtn_Click);
+            // 
             // groupBox4
             // 
             this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox4.AutoSize = true;
+            this.groupBox4.Controls.Add(this.btnToggleLanguage);
             this.groupBox4.Controls.Add(this.BIUbtn);
             this.groupBox4.Controls.Add(this.fontGroupBtn);
             this.groupBox4.Controls.Add(this.startparBtn);
@@ -410,13 +450,23 @@ namespace WindowsFormsApp1
             this.groupBox4.Controls.Add(this.parGroup);
             this.groupBox4.Controls.Add(this.rtlBtn);
             this.groupBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox4.Location = new System.Drawing.Point(1629, 522);
+            this.groupBox4.Location = new System.Drawing.Point(1586, 398);
             this.groupBox4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox4.Size = new System.Drawing.Size(308, 217);
+            this.groupBox4.Size = new System.Drawing.Size(351, 341);
             this.groupBox4.TabIndex = 21;
             this.groupBox4.TabStop = false;
+            // 
+            // btnToggleLanguage
+            // 
+            this.btnToggleLanguage.Location = new System.Drawing.Point(211, 251);
+            this.btnToggleLanguage.Name = "btnToggleLanguage";
+            this.btnToggleLanguage.Size = new System.Drawing.Size(115, 58);
+            this.btnToggleLanguage.TabIndex = 30;
+            this.btnToggleLanguage.Text = "eng/per";
+            this.btnToggleLanguage.UseVisualStyleBackColor = true;
+            this.btnToggleLanguage.Click += new System.EventHandler(this.btnToggleLanguage_Click);
             // 
             // BIUbtn
             // 
@@ -432,7 +482,7 @@ namespace WindowsFormsApp1
             // 
             // fontGroupBtn
             // 
-            this.fontGroupBtn.Location = new System.Drawing.Point(143, 25);
+            this.fontGroupBtn.Location = new System.Drawing.Point(19, 102);
             this.fontGroupBtn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.fontGroupBtn.Name = "fontGroupBtn";
             this.fontGroupBtn.Size = new System.Drawing.Size(93, 55);
@@ -440,6 +490,19 @@ namespace WindowsFormsApp1
             this.fontGroupBtn.Text = "font";
             this.fontGroupBtn.UseVisualStyleBackColor = true;
             this.fontGroupBtn.Click += new System.EventHandler(this.fontGroupBtn_Click);
+            // 
+            // rtlBtn
+            // 
+            this.rtlBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtlBtn.Location = new System.Drawing.Point(6, 143);
+            this.rtlBtn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.rtlBtn.Name = "rtlBtn";
+            this.rtlBtn.Size = new System.Drawing.Size(128, 55);
+            this.rtlBtn.TabIndex = 29;
+            this.rtlBtn.Text = "RTL/LTR";
+            this.rtlBtn.UseVisualStyleBackColor = true;
+            this.rtlBtn.Visible = false;
+            this.rtlBtn.Click += new System.EventHandler(this.rtlBtn_Click);
             // 
             // filesListBox
             // 
@@ -489,32 +552,6 @@ namespace WindowsFormsApp1
             this.settingBtn.UseVisualStyleBackColor = true;
             this.settingBtn.Click += new System.EventHandler(this.settingBtn_Click);
             // 
-            // rtlBtn
-            // 
-            this.rtlBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rtlBtn.Location = new System.Drawing.Point(27, 131);
-            this.rtlBtn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.rtlBtn.Name = "rtlBtn";
-            this.rtlBtn.Size = new System.Drawing.Size(128, 55);
-            this.rtlBtn.TabIndex = 29;
-            this.rtlBtn.Text = "RTL/LTR";
-            this.rtlBtn.UseVisualStyleBackColor = true;
-            this.rtlBtn.Visible = false;
-            this.rtlBtn.Click += new System.EventHandler(this.rtlBtn_Click);
-            // 
-            // aligenmentBtn
-            // 
-            this.aligenmentBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.aligenmentBtn.Location = new System.Drawing.Point(0, 43);
-            this.aligenmentBtn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.aligenmentBtn.Name = "aligenmentBtn";
-            this.aligenmentBtn.Size = new System.Drawing.Size(146, 55);
-            this.aligenmentBtn.TabIndex = 30;
-            this.aligenmentBtn.Text = "aligenment";
-            this.aligenmentBtn.UseVisualStyleBackColor = true;
-            this.aligenmentBtn.Visible = false;
-            this.aligenmentBtn.Click += new System.EventHandler(this.aligenmentBtn_Click);
-            // 
             // MainrichTextBox
             // 
             this.MainrichTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -528,19 +565,6 @@ namespace WindowsFormsApp1
             this.MainrichTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox1_KeyPress);
             this.MainrichTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyUp);
             this.MainrichTextBox.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.textBox1_PreviewKeyDown);
-            // 
-            // btnSetSpacing
-            // 
-            this.btnSetSpacing.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSetSpacing.Location = new System.Drawing.Point(91, 118);
-            this.btnSetSpacing.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnSetSpacing.Name = "btnSetSpacing";
-            this.btnSetSpacing.Size = new System.Drawing.Size(156, 55);
-            this.btnSetSpacing.TabIndex = 32;
-            this.btnSetSpacing.Text = "Set Spacing";
-            this.btnSetSpacing.UseVisualStyleBackColor = true;
-            this.btnSetSpacing.Visible = false;
-            this.btnSetSpacing.Click += new System.EventHandler(this.btnSetSpacing_Click);
             // 
             // spacingValue
             // 
@@ -579,19 +603,6 @@ namespace WindowsFormsApp1
             this.exportBtn.Visible = false;
             this.exportBtn.Click += new System.EventHandler(this.exportBtn_Click);
             // 
-            // btnInsertPageBreak
-            // 
-            this.btnInsertPageBreak.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnInsertPageBreak.Location = new System.Drawing.Point(76, 54);
-            this.btnInsertPageBreak.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnInsertPageBreak.Name = "btnInsertPageBreak";
-            this.btnInsertPageBreak.Size = new System.Drawing.Size(171, 68);
-            this.btnInsertPageBreak.TabIndex = 35;
-            this.btnInsertPageBreak.Text = "break page";
-            this.btnInsertPageBreak.UseVisualStyleBackColor = true;
-            this.btnInsertPageBreak.Visible = false;
-            this.btnInsertPageBreak.Click += new System.EventHandler(this.btnInsertPageBreak_Click);
-            // 
             // bMarkList
             // 
             this.bMarkList.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -617,6 +628,7 @@ namespace WindowsFormsApp1
             this.Controls.Add(this.MainrichTextBox);
             this.Controls.Add(this.settingBtn);
             this.Controls.Add(this.titleTextBox);
+            this.Controls.Add(this.gotoBtn);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.filesListBox);
             this.Controls.Add(this.groupBox4);
@@ -684,6 +696,7 @@ namespace WindowsFormsApp1
         private System.Windows.Forms.Button exportBtn;
         private System.Windows.Forms.Button btnInsertPageBreak;
         private System.Windows.Forms.ListBox bMarkList;
+        private System.Windows.Forms.Button btnToggleLanguage;
     }
 }
 

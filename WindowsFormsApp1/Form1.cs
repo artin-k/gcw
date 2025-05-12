@@ -17,10 +17,16 @@ using Microsoft.Office.Interop.Word;
 
 //cursor tutorial
 
+//give alert to user before exit for saving 
+//1 yes 2 no 3 cancel 
+// 4.5  eng/ fa  ok
+//when start to typinmg exit from thr group 
+//book mark 
+
+//start sentence end sentence exception handelling
+
 namespace WindowsFormsApp1
 {
-
-
 
     public partial class Form1 : Form
     {
@@ -64,7 +70,9 @@ namespace WindowsFormsApp1
         private List<string> voiceTagList = new List<string>();
         private List<string> dateList = new List<string>();
         private List<string> fontList = new List<string>();
-        //02D1
+
+        bool exitAlert;
+
         private AudioFileReader audioFile;
         private WaveOutEvent outputDevice;
 
@@ -82,11 +90,8 @@ namespace WindowsFormsApp1
         {
             this.KeyPreview = true;
             InitializeComponent();
-
             InitializeTimer();
-            InitializeSoundMappings();
-            
-
+            InitializeSoundMappings();           
         }
 
         private void InitializeTimer() //this make a timer for alarm group
@@ -94,7 +99,6 @@ namespace WindowsFormsApp1
             beepTimer = new Timer();
             beepTimer.Interval = 2000; // 2 seconds
             beepTimer.Tick += BeepTimer_Tick;
-
         }
 
 
@@ -583,42 +587,50 @@ namespace WindowsFormsApp1
 
         private void startsentBtn_Click(object sender, EventArgs e)
         {
-            MainrichTextBox.Focus();
-            // Get the current cursor position
-            int cursorPosition = MainrichTextBox.SelectionStart;
-
-            // Find the position of the previous period before the cursor
-            int startOfSentence = MainrichTextBox.Text.LastIndexOf('.', cursorPosition - 1);
-
-            // If the cursor is at the beginning of a sentence or there is no period found
-            if (cursorPosition == startOfSentence + 1 || startOfSentence == -1)
+            try
             {
-                // Find the period before the current sentence
-                startOfSentence = MainrichTextBox.Text.LastIndexOf('.', startOfSentence - 1);
+                MainrichTextBox.Focus();
+                // Get the current cursor position
+                int cursorPosition = MainrichTextBox.SelectionStart;
 
-                // If another period is found, move to the character after it
-                if (startOfSentence != -1)
+                // Find the position of the previous period before the cursor
+                int startOfSentence = MainrichTextBox.Text.LastIndexOf('.', cursorPosition - 1);
+
+                // If the cursor is at the beginning of a sentence or there is no period found
+                if (cursorPosition == startOfSentence + 1 || startOfSentence == -1)
                 {
-                    startOfSentence += 1; // Move to the first character after the period (and space)
+                    // Find the period before the current sentence
+                    startOfSentence = MainrichTextBox.Text.LastIndexOf('.', startOfSentence - 1);
+
+                    // If another period is found, move to the character after it
+                    if (startOfSentence != -1)
+                    {
+                        startOfSentence += 1; // Move to the first character after the period (and space)
+                    }
+                    else
+                    {
+                        // If no previous period is found, move to the start of the text
+                        startOfSentence = 0;
+                    }
                 }
                 else
                 {
-                    // If no previous period is found, move to the start of the text
-                    startOfSentence = 0;
+                    // Move to the first character after the found period (and space)
+                    startOfSentence += 1;
                 }
+
+                // Set the cursor to the beginning of the sentence
+                MainrichTextBox.SelectionStart = startOfSentence;
+                MainrichTextBox.SelectionLength = 0;
+
+                // Ensure the TextBox has focus so the cursor is visible
+                MainrichTextBox.Focus();
             }
-            else
+            catch (Exception ex)
             {
-                // Move to the first character after the found period (and space)
-                startOfSentence += 1;
+                MessageBox.Show("An error occurred");
             }
 
-            // Set the cursor to the beginning of the sentence
-            MainrichTextBox.SelectionStart = startOfSentence;
-            MainrichTextBox.SelectionLength = 0;
-
-            // Ensure the TextBox has focus so the cursor is visible
-            MainrichTextBox.Focus();
         }
 
 
@@ -698,6 +710,8 @@ namespace WindowsFormsApp1
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
+            exitAlert = true;
+
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true; // Stop default newline
@@ -753,12 +767,67 @@ namespace WindowsFormsApp1
         }
 
 
-
-        private void exitBtn_Click(object sender, EventArgs e)
+        public enum SaveOption
         {
-            System.Windows.Forms.Application.Exit();
+            Save,
+            DontSave,
+            Cancel
         }
 
+
+        private void exitBtn_Click(object sender,EventArgs e)
+        {
+            if (exitAlert)
+            {
+                System.Windows.Forms.Application.Exit();
+            }
+            else
+            {
+                this.KeyPreview = true;
+                //SaveOption result 
+                this.KeyDown += new KeyEventHandler(this.saveKeyDown);
+
+            }
+                      
+        }
+
+
+
+        private void saveKeyDown(object sender, KeyEventArgs e)
+        {
+            
+
+            SaveOption result;
+
+            switch (e.KeyCode)
+            {
+                case Keys.D1:
+                    result = SaveOption.Save;
+                    break;
+                case Keys.D2:
+                    result = SaveOption.DontSave;
+                    break;
+                case Keys.D3:
+                    result = SaveOption.Cancel;
+                    break;
+                default:
+                    return;
+            }
+
+            if (result == SaveOption.Save)
+            {
+                saveingFunc();
+            }
+            else if (result == SaveOption.DontSave)
+            {
+                System.Windows.Forms.Application.Exit();
+            }
+            else if (result == SaveOption.Cancel)
+            {
+                return;
+            }
+
+        }
 
 
 
@@ -941,9 +1010,6 @@ namespace WindowsFormsApp1
         }
 
 
-
-
-        // Ensure pressedChar is initialized
         private void saveBtn_Click(object sender, EventArgs e)
         {
             saveingFunc();
@@ -951,7 +1017,6 @@ namespace WindowsFormsApp1
 
         public void saveingFunc()
         {
-            MessageBox.Show("Save button clicked!");
             if (string.IsNullOrWhiteSpace(titleTextBox.Text))
             {
                 DialogResult result = MessageBox.Show("The file is new. Do you want to save it?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
@@ -969,7 +1034,10 @@ namespace WindowsFormsApp1
                     MessageBox.Show("You didn't specify a file name.");
                 }
             }
-
+            else
+            {
+                saveWord();
+            }
             string wordFileName = $"{titleTextBox.Text}.docx";
         }
 
@@ -1390,9 +1458,17 @@ namespace WindowsFormsApp1
         }
 
         private async void textBox2_KeyDown(object sender, KeyEventArgs e)
-        {            
+        {
             if (e.KeyCode == Keys.Enter && titleTextBox.Text != null)
             {
+                savingProg();
+            }
+        }
+
+
+        public async void savingProg()
+        {
+
                 DateTime currentDateTime = DateTime.Now;
                 string dateTimeString = currentDateTime.ToString("yyyy-MM-dd HH:mm:ss");
 
@@ -1457,7 +1533,7 @@ namespace WindowsFormsApp1
                     using (StreamWriter writer = new StreamWriter(filePathData, true))
                     {
                         writer.WriteLine($"{pressedChar}|{wordName}.docx|{outputFilePath}|{dateTimeString}");
-                    }               
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -1473,8 +1549,7 @@ namespace WindowsFormsApp1
                     titleTextBox.Text = wordName;
                     this.titleTextBox.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
 
-                }
-            }
+                }          
         }
 
         public void saveWord()
@@ -1507,12 +1582,14 @@ namespace WindowsFormsApp1
                 document.Close(false);
                 wordApp.Quit();
 
+                exitAlert = true;
                 MessageBox.Show("Saved to Word successfully!");
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error saving to Word: " + ex.Message);
             }
+
 
         }
 
@@ -1780,32 +1857,40 @@ namespace WindowsFormsApp1
 
         private void endsentBtn_Click(object sender, EventArgs e)
         {
-            // Get the current cursor position
-            int cursorPosition = MainrichTextBox.SelectionStart;
-
-            // Find the position of the next period after the cursor
-            int endOfSentence = MainrichTextBox.Text.IndexOf('.', cursorPosition);
-
-            // If a period is found
-            if (endOfSentence != -1)
+            try
             {
-                // Move to the character after the period (accounting for the period and space)
-                MainrichTextBox.SelectionStart = endOfSentence + 1;
+                // Get the current cursor position
+                int cursorPosition = MainrichTextBox.SelectionStart;
 
-                // If there is a space after the period, move the cursor after the space
-                if (endOfSentence + 1 < MainrichTextBox.Text.Length && MainrichTextBox.Text[endOfSentence + 1] == ' ')
+                // Find the position of the next period after the cursor
+                int endOfSentence = MainrichTextBox.Text.IndexOf('.', cursorPosition);
+
+                // If a period is found
+                if (endOfSentence != -1)
                 {
-                    MainrichTextBox.SelectionStart++;
+                    // Move to the character after the period (accounting for the period and space)
+                    MainrichTextBox.SelectionStart = endOfSentence + 1;
+
+                    // If there is a space after the period, move the cursor after the space
+                    if (endOfSentence + 1 < MainrichTextBox.Text.Length && MainrichTextBox.Text[endOfSentence + 1] == ' ')
+                    {
+                        MainrichTextBox.SelectionStart++;
+                    }
                 }
+                else
+                {
+                    // If no period is found, move to the end of the text
+                    MainrichTextBox.SelectionStart = MainrichTextBox.Text.Length;
+                }
+
+                // Ensure the TextBox has focus so the cursor is visible
+                MainrichTextBox.Focus();
             }
-            else
+            catch (Exception)
             {
-                // If no period is found, move to the end of the text
-                MainrichTextBox.SelectionStart = MainrichTextBox.Text.Length;
+                MessageBox.Show($"An error occurred");
             }
 
-            // Ensure the TextBox has focus so the cursor is visible
-            MainrichTextBox.Focus();
 
         }
 
@@ -2134,6 +2219,28 @@ namespace WindowsFormsApp1
             this.btnSetSpacing.Visible = !this.btnSetSpacing.Visible;
             this.btnInsertPageBreak.Visible = !this.btnInsertPageBreak.Visible;
             
+        }
+
+        private void btnToggleLanguage_Click(object sender, EventArgs e)
+        {
+            // Get current input language
+            var currentLang = InputLanguage.CurrentInputLanguage;
+
+            // Get installed input languages
+            var languages = InputLanguage.InstalledInputLanguages;
+
+            // Find Persian and English input languages
+            var persian = languages.Cast<InputLanguage>().FirstOrDefault(lang => lang.Culture.TwoLetterISOLanguageName == "fa");
+            var english = languages.Cast<InputLanguage>().FirstOrDefault(lang => lang.Culture.TwoLetterISOLanguageName == "en");
+
+            if (currentLang.Culture.TwoLetterISOLanguageName == "fa" && english != null)
+            {
+                InputLanguage.CurrentInputLanguage = english;
+            }
+            else if (currentLang.Culture.TwoLetterISOLanguageName == "en" && persian != null)
+            {
+                InputLanguage.CurrentInputLanguage = persian;
+            }
         }
     }
 }
