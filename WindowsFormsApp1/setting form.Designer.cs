@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Globalization;
+using System.Windows.Forms;
 
 namespace WindowsFormsApp1
 {
@@ -46,6 +47,8 @@ namespace WindowsFormsApp1
             this.listBoxAllFonts.Name = "listBoxAllFonts";
             this.listBoxAllFonts.Size = new System.Drawing.Size(209, 260);
             this.listBoxAllFonts.TabIndex = 0;
+            this.listBoxAllFonts.SelectionMode = SelectionMode.MultiExtended;
+            this.listBoxAllFonts.Sorted = true;
             // 
             // listBoxSelectedFonts
             // 

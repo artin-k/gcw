@@ -633,7 +633,6 @@ namespace WindowsFormsApp1
 
         }
 
-
         private void Recording()
         {
             try

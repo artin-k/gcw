@@ -27,13 +27,12 @@ namespace WindowsFormsApp1
 
         private void setting_form_Load(object sender, EventArgs e)
         {
-
-
-            string folderPath = AppDomain.CurrentDomain.BaseDirectory;
-
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string folderPath = Path.Combine(basePath, "files");
             try
             {
-                filePath = Path.Combine(folderPath, "selected_fonts.txt");
+                filePath = Path.Combine(folderPath, "fonts.txt");
+                Console.WriteLine(filePath);
 
                 if (File.Exists(filePath))
                 {                    
@@ -52,15 +51,31 @@ namespace WindowsFormsApp1
             
         }
 
-
         private void LoadFonts()
         {
-            using (InstalledFontCollection fontsCollection = new InstalledFontCollection())
+            try
             {
-                foreach (FontFamily font in fontsCollection.Families)
+                listBoxAllFonts.Items.Clear();
+
+                // Get all installed fonts
+                using (var fonts = new InstalledFontCollection())
                 {
-                    listBoxAllFonts.Items.Add(font.Name);
+                    // Add font names sorted alphabetically
+                    var fontNames = fonts.Families
+                        .Select(f => f.Name)
+                        .OrderBy(f => f)
+                        .ToArray();
+
+                    listBoxAllFonts.Items.AddRange(fontNames);
                 }
+
+                // Configure ListBox for multiple selection
+                listBoxAllFonts.SelectionMode = SelectionMode.MultiExtended;
+                listBoxAllFonts.Sorted = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading fonts: {ex.Message}");
             }
         }
 
@@ -86,7 +101,6 @@ namespace WindowsFormsApp1
             else
             {
                 MessageBox.Show("Please select both a font and a size.");
-
             }
          
         }
@@ -107,48 +121,43 @@ namespace WindowsFormsApp1
 
         private void SaveSelectedFontsToFile()
         {
-            // Get the path to the directory where the program is installed
-            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-
-            // Combine the base directory with the file name
-            string filePath = Path.Combine(baseDirectory, "selected_fonts.txt");
-
             try
             {
-                // Use StreamWriter with the append parameter set to true
-                using (StreamWriter writer = new StreamWriter(filePath, true))
-                {
-                    if (listBoxSelectedFonts.Items.Count == 0)
-                    {
-                        MessageBox.Show("No fonts selected!");
-                        return;
-                    }
+                // Get all items from the ListBox
+                var allFonts = listBoxSelectedFonts.Items
+                    .OfType<string>()  // Cast to string
+                    .ToList();
 
-                    foreach (FontItem font in listBoxSelectedFonts.Items)
-                    {
-                        writer.WriteLine(font.Name + " - " + font.Size);
-                    }
+                // Check if list is empty
+                if (allFonts.Count == 0)
+                {
+                    MessageBox.Show("The font list is empty!", "Warning",
+                                  MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
 
-                MessageBox.Show("Selected fonts appended to " + filePath);
+                File.WriteAllLines(filePath, allFonts);  // Overwrite file each time
+
+                MessageBox.Show($"Successfully saved {allFonts.Count} fonts to:\n{filePath}",
+                              "Success",
+                              MessageBoxButtons.OK,
+                              MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An error occurred while saving the file: " + ex.Message);
-            }
-
-
-        }
-        private class FontItem
-        {
-            public string Name { get; set; }
-            public int Size { get; set; }
-
-            public override string ToString()
-            {
-                return Name + " - " + Size;
+                MessageBox.Show($"Save Error: {ex.Message}");
             }
         }
+    }
+    // Add this in a new file (e.g., FontItem.cs) or at the top of your form class
+    public class FontItem
+    {
+        public string Name { get; set; }
+        public float Size { get; set; }
 
+        // Optional: Override ToString() for better ListBox display
+        public override string ToString() => $"{Name} ({Size}pt)";
     }
 }
+
+
