@@ -25,10 +25,14 @@ using Microsoft.Office.Interop.Word;
 
 //start sentence end sentence exception handelling
 
+//start para exception handel 
+//detect the paragraphs 
+
+
 namespace WindowsFormsApp1
 {
 
-    public partial class Form1 : Form
+    public partial class mainForm : Form
     {
         private bool isAlarmActive = false; // Flag to track if the alarm has already sounded
         public int[] savedCarentPosiotion = new int[10];
@@ -86,7 +90,7 @@ namespace WindowsFormsApp1
         //inset add break page 
 
         //textbox2 curor moves left to right to read 
-        public Form1()
+        public mainForm()
         {
             this.KeyPreview = true;
             InitializeComponent();
@@ -263,6 +267,7 @@ namespace WindowsFormsApp1
                 fontSizeComboBox.Items.Add(size.ToString());
             }
 
+            MainrichTextBox.Focus();
         }
 
 
@@ -535,53 +540,94 @@ namespace WindowsFormsApp1
 
         private void startparBtn_Click(object sender, EventArgs e)
         {
-            string text = MainrichTextBox.Text;
-            int cursorPos = MainrichTextBox.SelectionStart;
-
-            // Find the [PARA] marker before the current cursor
-            int previousMarker = text.LastIndexOf("[PARA]", cursorPos - 1);
-
-            if (previousMarker >= 0)
+            try
             {
-                MainrichTextBox.SelectionStart = previousMarker;
+                string text = MainrichTextBox.Text;
+                int cursorPos = MainrichTextBox.SelectionStart;
+
+                // Find the [PARA] marker before the current cursor
+                int previousMarker = text.LastIndexOf("[PARA]", cursorPos - 1);
+
+                if (previousMarker >= 0)
+                {
+                    MainrichTextBox.SelectionStart = previousMarker;
+                }
+                else
+                {
+                    // If no marker found, go to start
+                    MainrichTextBox.SelectionStart = 0;
+                }
+
+                MainrichTextBox.ScrollToCaret();
+                
+                gotoBtnGroup();
             }
-            else
+            catch(Exception ex)
             {
-                // If no marker found, go to start
-                MainrichTextBox.SelectionStart = 0;
+                MessageBox.Show("no other paragraphs detected"+ex.Message);
             }
 
-            MainrichTextBox.ScrollToCaret();
-            MainrichTextBox.Focus();
         }
-
-
 
         private void endparBtn_Click(object sender, EventArgs e)
         {
-            string text = MainrichTextBox.Text;
-            int cursorPos = MainrichTextBox.SelectionStart;
-
-            int lastMarkerBeforeCursor = text.LastIndexOf("[PARA]", cursorPos - 1);
-
-            if (lastMarkerBeforeCursor >= 0)
+            try
             {
-                // Move cursor to the END of that marker
-                int newPosition = lastMarkerBeforeCursor + "[PARA]".Length;
-                MainrichTextBox.SelectionStart = newPosition;
+                string text = MainrichTextBox.Text;
+                int cursorPos = MainrichTextBox.SelectionStart;
+
+                // Find the current paragraph marker before or at the cursor
+                int currentMarker = text.LastIndexOf("[PARA]", cursorPos);
+
+                if (currentMarker == -1)
+                {
+                    // No paragraph marker found before or at cursor
+                    MessageBox.Show("No paragraphs found.");
+                    return;
+                }
+
+                int currentParagraphStart = currentMarker + "[PARA]".Length;
+
+                // Find the next [PARA] after the current one
+                int nextMarker = text.IndexOf("[PARA]", currentParagraphStart);
+
+                int nextParagraphEnd;
+                if (nextMarker != -1)
+                {
+                    // Find end of next paragraph
+                    int afterNext = text.IndexOf("[PARA]", nextMarker + "[PARA]".Length);
+                    if (afterNext != -1)
+                        nextParagraphEnd = afterNext;
+                    else
+                        nextParagraphEnd = text.Length; // End of document if no further marker
+                }
+                else
+                {
+                    // No next paragraph exists
+                    MessageBox.Show("You're at the last paragraph.");
+                    return;
+                }
+
+                // If we're already at or beyond the end of current paragraph, go to next one
+                if (cursorPos >= nextMarker)
+                {
+                    MainrichTextBox.SelectionStart = nextParagraphEnd;
+                }
+                else
+                {
+                    // Otherwise, go to end of current paragraph
+                    MainrichTextBox.SelectionStart = nextMarker;
+                }
+
                 MainrichTextBox.ScrollToCaret();
-                MainrichTextBox.Focus();
+                
+                gotoBtnGroup();
             }
-            else
+            catch (Exception ex)
             {
-                // No marker found, go to start
-                MainrichTextBox.SelectionStart = 0;
-                MainrichTextBox.ScrollToCaret();
-                MainrichTextBox.Focus();
+                MessageBox.Show("Error while navigating paragraphs: " + ex.Message);
             }
         }
-
-
 
 
 
@@ -623,8 +669,8 @@ namespace WindowsFormsApp1
                 MainrichTextBox.SelectionStart = startOfSentence;
                 MainrichTextBox.SelectionLength = 0;
 
-                // Ensure the TextBox has focus so the cursor is visible
-                MainrichTextBox.Focus();
+                
+                gotoBtnGroup();
             }
             catch (Exception ex)
             {
@@ -942,6 +988,11 @@ namespace WindowsFormsApp1
 
         private void gotoBtn_Click(object sender, EventArgs e)
         {
+            gotoBtnGroup();
+        }
+
+        public void gotoBtnGroup()
+        {
             this.startparBtn.Visible = !this.startparBtn.Visible;
             this.fontGroupBtn.Visible = !this.fontGroupBtn.Visible;
             endsentBtn.Visible = !endsentBtn.Visible;
@@ -950,7 +1001,10 @@ namespace WindowsFormsApp1
             this.gotoBmark.Visible = !this.gotoBmark.Visible;
             this.searchBtn.Visible = !this.searchBtn.Visible;
             this.insertBtn.Visible = !this.insertBtn.Visible;
+
+            MainrichTextBox.Focus();
         }
+
 
         private void gotoBmark_Click(object sender, EventArgs e)
         {
@@ -1882,8 +1936,7 @@ namespace WindowsFormsApp1
                     MainrichTextBox.SelectionStart = MainrichTextBox.Text.Length;
                 }
 
-                // Ensure the TextBox has focus so the cursor is visible
-                MainrichTextBox.Focus();
+                gotoBtnGroup();
             }
             catch (Exception)
             {

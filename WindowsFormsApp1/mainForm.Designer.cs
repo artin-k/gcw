@@ -3,7 +3,7 @@ using System;
 
 namespace WindowsFormsApp1
 {
-	partial class Form1
+	partial class mainForm
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -558,6 +558,7 @@ namespace WindowsFormsApp1
             this.MainrichTextBox.Location = new System.Drawing.Point(287, 158);
             this.MainrichTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MainrichTextBox.Name = "MainrichTextBox";
+            this.MainrichTextBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.MainrichTextBox.Size = new System.Drawing.Size(616, 302);
             this.MainrichTextBox.TabIndex = 31;
             this.MainrichTextBox.Text = "";
