@@ -26,7 +26,10 @@ using Microsoft.Office.Interop.Word;
 //start sentence end sentence exception handelling
 
 //start para exception handel 
-//detect the paragraphs 
+//detect the paragraphs
+//
+//exit works all the time 
+//typing without voice 
 
 
 namespace WindowsFormsApp1
@@ -453,18 +456,6 @@ namespace WindowsFormsApp1
             }
         }
 
-        void FlashBookmark(string name)
-        {
-            if (bookmarks.ContainsKey(name))
-            {
-                int pos = bookmarks[name].Position;
-                MainrichTextBox.Select(pos, 1);
-                MainrichTextBox.SelectionBackColor = Color.Yellow;
-                await Task.Delay(500);
-                MainrichTextBox.SelectionBackColor = Color.White;
-                MainrichTextBox.SelectionLength = 0;
-            }
-        }
 
 
 
