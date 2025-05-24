@@ -9,15 +9,14 @@ namespace WindowsFormsApp1
     class Bookmark
     {
         public string Name { get; set; }
-        public int Start { get; set; }
-        public int Length { get; set; }
+        public int Position { get; set; }
 
-        public Bookmark(string name, int start, int length = 0)
+        public Bookmark(string name, int position)
         {
             Name = name;
-            Start = start;
-            Length = length;
+            Position = position;
         }
     }
+
 
 }

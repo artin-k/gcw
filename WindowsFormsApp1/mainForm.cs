@@ -84,6 +84,8 @@ namespace WindowsFormsApp1
         string soundMapping = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "soundDictionary");
 
         private Dictionary<char, string> soundMappings;
+        Dictionary<string, Bookmark> bookmarks = new Dictionary<string, Bookmark>();
+
 
         //opening save the style in the word 
         //paging 
@@ -364,17 +366,30 @@ namespace WindowsFormsApp1
             {
                 Console.WriteLine($"{alphaList[i]} | {nameList[i]} | {voiceTagList[i]} | {dateList[i]}");
             }
-
-
-
-            //at the end fill up the font list 
             PopulateFontComboBox();
-
         }
 
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            PositionGroupBoxes();
+        }
 
+        private void PositionGroupBoxes()
+        {
+            int margin = 10;
 
+            // Top-left corner
+            groupBox2.Location = new System.Drawing.Point(margin, margin);
 
+            // Top-right corner
+            groupBox1.Location = new System.Drawing.Point(ClientSize.Width - groupBox1.Width - margin, margin);
+
+            // Bottom-left corner
+            groupBox3.Location = new System.Drawing.Point(margin, ClientSize.Height - groupBox3.Height - margin);
+
+            // Bottom-right corner
+            groupBox4.Location = new System.Drawing.Point(ClientSize.Width - groupBox4.Width - margin, ClientSize.Height - groupBox4.Height - margin);
+        }
         public class Printer
         {
             private PrintDocument printDocument = new PrintDocument();
@@ -412,27 +427,45 @@ namespace WindowsFormsApp1
             }
         }
 
-        private void Form1_Resize(object sender, EventArgs e)
+
+
+
+        void AddBookmark(string name)
         {
-            PositionGroupBoxes();
+            int position = MainrichTextBox.SelectionStart;
+            bookmarks[name] = new Bookmark(name, position);
+            MessageBox.Show($"Bookmark '{name}' set at position {position}.");
         }
 
-        private void PositionGroupBoxes()
+        void GoToBookmark(string name)
         {
-            int margin = 10;
-
-            // Top-left corner
-            groupBox2.Location = new System.Drawing.Point(margin, margin);
-
-            // Top-right corner
-            groupBox1.Location = new System.Drawing.Point(ClientSize.Width - groupBox1.Width - margin, margin);
-
-            // Bottom-left corner
-            groupBox3.Location = new System.Drawing.Point(margin, ClientSize.Height - groupBox3.Height - margin);
-
-            // Bottom-right corner
-            groupBox4.Location = new System.Drawing.Point(ClientSize.Width - groupBox4.Width - margin, ClientSize.Height - groupBox4.Height - margin);
+            if (bookmarks.ContainsKey(name))
+            {
+                int pos = bookmarks[name].Position;
+                MainrichTextBox.SelectionStart = pos;
+                MainrichTextBox.SelectionLength = 0;
+                MainrichTextBox.ScrollToCaret();
+                MainrichTextBox.Focus();
+            }
+            else
+            {
+                MessageBox.Show($"Bookmark '{name}' not found.");
+            }
         }
+
+        void FlashBookmark(string name)
+        {
+            if (bookmarks.ContainsKey(name))
+            {
+                int pos = bookmarks[name].Position;
+                MainrichTextBox.Select(pos, 1);
+                MainrichTextBox.SelectionBackColor = Color.Yellow;
+                await Task.Delay(500);
+                MainrichTextBox.SelectionBackColor = Color.White;
+                MainrichTextBox.SelectionLength = 0;
+            }
+        }
+
 
 
 
@@ -741,12 +774,7 @@ namespace WindowsFormsApp1
 
         private void bMarkBtn_Click(object sender, EventArgs e)
         {
-            string bookChar = "ˑ";
-            int textPlace = MainrichTextBox.SelectionStart;
-            MainrichTextBox.Text = MainrichTextBox.Text.Substring(0, textPlace) + bookChar + MainrichTextBox.Text.Substring(textPlace);
-            MainrichTextBox.SelectionStart = textPlace;
-            MainrichTextBox.Focus();
-
+            
             MessageBox.Show("push a key");
 
             isWaitingForKey = true; // <---- Activate waiting mode
@@ -769,6 +797,7 @@ namespace WindowsFormsApp1
             {
                 if (e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
                 {
+                    AddBookmark(e.ToString());
                     outputFilePath = Path.Combine(userVoicePath, $"{ e.KeyCode.ToString()}.wav");
                     HandleAlphabetKeyDown(e.KeyCode);
                 }
@@ -791,9 +820,6 @@ namespace WindowsFormsApp1
 
                 await WaitForKeyPressAsync(); // wait until key up
 
-                int textPlace = MainrichTextBox.SelectionStart;
-                MainrichTextBox.Text = MainrichTextBox.Text.Substring(0, textPlace) + key + MainrichTextBox.Text.Substring(textPlace);
-                MainrichTextBox.SelectionStart = textPlace + 1;
                 MainrichTextBox.Focus();
             }
         }
@@ -811,15 +837,12 @@ namespace WindowsFormsApp1
             }
         }
 
-
         public enum SaveOption
         {
             Save,
             DontSave,
             Cancel
         }
-
-
         private void exitBtn_Click(object sender,EventArgs e)
         {
             if (exitAlert)
@@ -1942,8 +1965,6 @@ namespace WindowsFormsApp1
             {
                 MessageBox.Show($"An error occurred");
             }
-
-
         }
 
         private void settingBtn_Click(object sender, EventArgs e)
